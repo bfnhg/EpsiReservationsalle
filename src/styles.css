@@ -268,3 +268,60 @@ input,select,button{max-width:100%}
 .support-chat .support-panel-heading{display:block}
 @media(max-width:700px){.support-inbox{grid-template-columns:1fr}.support-conversations{max-height:none}.support-conversation{padding:10px}.support-panel,.support-conversations,.support-chat{padding:14px}.support-table{min-width:680px}}
 @media(max-width:560px){.support-compose-footer{align-items:stretch;flex-direction:column}.support-compose-footer .button{width:100%}.support-message{max-width:96%}.support-compose textarea{min-height:110px}}
+
+@media(max-width:600px){
+  .topbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    height:auto;
+    min-height:0;
+    gap:10px 12px;
+    padding:12px 16px;
+  }
+  .brand{grid-column:1}
+  .user-menu{grid-column:2;margin-left:0}
+  .main-nav{
+    grid-column:1/-1;
+    order:initial;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%;
+    height:auto;
+    gap:7px;
+    overflow:visible;
+  }
+  .nav-link{
+    min-width:0;
+    min-height:44px;
+    padding:7px 8px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    white-space:normal;
+    line-height:1.35;
+    text-align:center;
+    overflow-wrap:anywhere;
+  }
+  .nav-link.active{
+    border-color:var(--green);
+    background:#f3f6f0;
+  }
+  .main-content{padding:22px 16px 0}
+  .welcome-row{gap:12px}
+  .welcome-row>div:first-child{min-width:0}
+  .date-badge{flex-shrink:0}
+  .field-input input,.field-input select{min-width:0}
+  .page-footer{gap:12px;flex-wrap:wrap;line-height:1.5}
+}
+
+@media(max-width:380px){
+  .topbar{padding:10px 12px}
+  .main-content{padding-right:12px;padding-left:12px}
+  .nav-link{font-size:9px;padding:6px}
+  .welcome-row{flex-wrap:wrap}
+  .date-badge{margin-left:auto}
+  .booking-hero{padding-right:16px;padding-left:16px}
+  .hero-art{right:-76px;opacity:.35}
+  .search-panel{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 6px}
+  .search-field{min-width:0;padding-right:4px;padding-left:4px}
+  .search-button{min-width:0;gap:6px;padding-right:8px;padding-left:8px}
+}
