@@ -897,13 +897,17 @@ function App() {
   const availableRoomIds = new Set(rooms.map((room) => room.id));
 
   useEffect(() => {
-    if (!user || (activeTab !== "book" && activeTab !== "favorites") || displayedRooms.length === 0) return;
-    const results = document.querySelector<HTMLElement>(".results-section");
-    if (!results) return;
+    if (!user || (activeTab !== "book" && activeTab !== "favorites")) return;
+    const page = document.querySelector<HTMLElement>(".main-content");
+    if (!page) return;
 
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", () => {
       const context = gsap.context(() => {
+        gsap.fromTo(".results-section > .section-heading",
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        );
         gsap.fromTo(".room-card",
           { autoAlpha: 0, y: 34, z: -80, rotationX: 12, scale: 0.94, transformPerspective: 1000 },
           {
@@ -918,7 +922,32 @@ function App() {
             clearProps: "transform",
           },
         );
-      }, results);
+        if (activeTab === "book") {
+          gsap.to(".hero-orbit", {
+            rotation: 360,
+            duration: 24,
+            ease: "none",
+            repeat: -1,
+          });
+          gsap.to(".hero-cube", {
+            y: -10,
+            rotationY: 180,
+            rotationX: 12,
+            duration: 4,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+          });
+          gsap.to(".hero-orb", {
+            y: -14,
+            z: 16,
+            duration: 3,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+          });
+        }
+      }, page);
       return () => context.revert();
     });
 
@@ -958,18 +987,21 @@ function App() {
           <>
             {activeTab === "book" && <section className="booking-hero">
               <div className="hero-copy"><span className="hero-index">01 / RÉSERVER UN ESPACE</span><h2>Où souhaitez-vous<br />vous installer ?</h2><p>Choisissez votre créneau, nous trouvons la salle.</p></div>
-              <div className="hero-art" aria-hidden="true"><div className="art-window"><div className="art-sun" /><div className="art-hill hill-one" /><div className="art-hill hill-two" /><div className="art-table" /><div className="art-chair" /></div><span className="art-caption">ESPACE POUR VOS IDÉES</span></div>
+              <div className="hero-art" aria-hidden="true"><div className="hero-orbit" /><div className="hero-orb" /><div className="hero-cube" /><div className="art-window"><div className="art-sun" /><div className="art-hill hill-one" /><div className="art-hill hill-two" /><div className="art-table" /><div className="art-chair" /></div><span className="art-caption">ESPACE POUR VOS IDÉES</span></div>
             </section>}
 
             {activeTab === "book" && <section className="search-panel" aria-label="Critères de recherche">
-              <label className="search-field"><span className="field-label">QUAND ?</span><span className="field-input"><span className="field-icon">▦</span><input type="date" value={selectedDate} min={dateInputValue(new Date())} onChange={(event) => setSelectedDate(event.target.value)} aria-label="Date de réservation" /></span></label>
-              <label className="search-field"><span className="field-label">DÉBUT</span><span className="field-input"><span className="field-icon">◷</span><select value={startTime} onChange={(event) => setStartTime(event.target.value)} aria-label="Heure de début">{timeOptions.map((minutes) => { const value = `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`; return <option key={minutes} value={value}>{value}</option>; })}</select></span></label>
-              <label className="search-field"><span className="field-label">DURÉE</span><span className="field-input"><span className="field-icon">◴</span><select value={duration} onChange={(event) => setDuration(event.target.value)} aria-label="Durée de réservation">{durationOptions.map((minutes) => <option key={minutes} value={minutes}>{minutes < 60 ? `${minutes} minutes` : minutes % 60 === 0 ? `${minutes / 60} heure${minutes > 60 ? "s" : ""}` : `${Math.floor(minutes / 60)} h ${minutes % 60}`}</option>)}</select></span></label>
-              <button className="button search-button" onClick={() => void loadRooms()} disabled={loadingRooms}><span>{loadingRooms ? "Recherche…" : "Trouver une salle"}</span><span aria-hidden="true">↗</span></button>
+              <div className="search-panel-heading"><span className="search-panel-icon" aria-hidden="true">⌕</span><div><p className="eyebrow">VOTRE PROCHAIN ESPACE</p><h2>Personnalisez votre recherche</h2></div><span className="search-step">ÉTAPE 01 <b>—</b> 02</span></div>
+              <div className="search-fields">
+                <label className="search-field"><span className="field-label">DATE DE RÉSERVATION</span><span className="field-input"><span className="field-icon">▦</span><input type="date" value={selectedDate} min={dateInputValue(new Date())} onChange={(event) => setSelectedDate(event.target.value)} aria-label="Date de réservation" /></span></label>
+                <label className="search-field"><span className="field-label">HEURE DE DÉBUT</span><span className="field-input"><span className="field-icon">◷</span><select value={startTime} onChange={(event) => setStartTime(event.target.value)} aria-label="Heure de début">{timeOptions.map((minutes) => { const value = `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`; return <option key={minutes} value={value}>{value}</option>; })}</select></span></label>
+                <label className="search-field"><span className="field-label">DURÉE</span><span className="field-input"><span className="field-icon">◴</span><select value={duration} onChange={(event) => setDuration(event.target.value)} aria-label="Durée de réservation">{durationOptions.map((minutes) => <option key={minutes} value={minutes}>{minutes < 60 ? `${minutes} minutes` : minutes % 60 === 0 ? `${minutes / 60} heure${minutes > 60 ? "s" : ""}` : `${Math.floor(minutes / 60)} h ${minutes % 60}`}</option>)}</select></span></label>
+                <button className="button search-button" onClick={() => void loadRooms()} disabled={loadingRooms}><span>{loadingRooms ? "Recherche…" : "Trouver une salle"}</span><span aria-hidden="true">↗</span></button>
+              </div>
             </section>}
 
             <section className="results-section">
-              <div className="section-heading"><div><p className="eyebrow">{activeTab === "favorites" ? "VOS SALLES PRÉFÉRÉES" : "LE BON ESPACE POUR VOUS"}</p><h2>{activeTab === "favorites" ? "Mes favoris" : "Salles disponibles"} <span className="result-count">{(activeTab === "favorites" ? favorites.length : rooms.length).toString().padStart(2, "0")}</span></h2></div>{activeTab === "book" && <div className="filters"><label className="capacity-filter"><span className="sr-only">Capacité minimum</span><select value={minCapacity} onChange={(event) => setMinCapacity(event.target.value)}><option value="">Toutes capacités</option><option value="4">4+ personnes</option><option value="8">8+ personnes</option><option value="12">12+ personnes</option><option value="20">20+ personnes</option></select></label><label className="check-filter"><input type="checkbox" checked={accessibleOnly} onChange={(event) => setAccessibleOnly(event.target.checked)} /><span>♿</span> Accessible PMR</label></div>}</div>
+              <div className="section-heading"><div><p className="eyebrow">{activeTab === "favorites" ? "VOS SALLES PRÉFÉRÉES" : "SÉLECTION EPSI · DISPONIBILITÉS EN TEMPS RÉEL"}</p><h2>{activeTab === "favorites" ? "Mes favoris" : "Trouvez votre salle"} <span className="result-count">{(activeTab === "favorites" ? favorites.length : rooms.length).toString().padStart(2, "0")}</span></h2><p className="results-subtitle">{activeTab === "favorites" ? "Vos espaces enregistrés pour les retrouver facilement." : "Choisissez l’espace idéal parmi les salles disponibles."}</p></div>{activeTab === "book" && <div className="filters"><div className="capacity-filter" role="group" aria-label="Filtrer par capacité minimum"><span className="filter-caption">CAPACITÉ</span><div className="capacity-chips">{[["", "Toutes"], ["4", "4+"], ["8", "8+"], ["12", "12+"], ["20", "20+"]].map(([value, label]) => <button type="button" key={value || "all"} className={minCapacity === value ? "capacity-chip selected" : "capacity-chip"} aria-pressed={minCapacity === value} onClick={() => setMinCapacity(value)}>{label}</button>)}</div></div><label className={accessibleOnly ? "check-filter selected" : "check-filter"}><input type="checkbox" checked={accessibleOnly} onChange={(event) => setAccessibleOnly(event.target.checked)} /><span aria-hidden="true">♿</span><span>PMR</span></label></div>}</div>
               {activeTab === "book" && loadingRooms ? <div className="empty-state">Recherche des disponibilités…</div> : displayedRooms.length === 0 ? <div className="empty-state"><span className="empty-icon">{activeTab === "favorites" ? "♡" : "⌕"}</span><h3>{activeTab === "favorites" ? "Aucune salle favorite" : "Aucune salle disponible"}</h3><p>{activeTab === "favorites" ? "Ajoutez une salle avec le cœur pour la retrouver ici." : "Essayez un autre créneau ou modifiez vos filtres."}</p></div> : (
                 <div className="room-grid">{displayedRooms.map((room, index) => {
                   const available = availableRoomIds.has(room.id);
