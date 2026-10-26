@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
-:root{font-family:"DM Sans",sans-serif;color:#1f2822;background:#f5f6f2;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-optical-sizing:auto;font-weight:400;--ink:#1f2822;--muted:#777f78;--green:#2d4937;--lime:#c7ed77;--line:#e3e6df;--paper:#fff}
+:root{font-family:"DM Sans",sans-serif;color:#1f2822;background:#f5f6f2;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-optical-sizing:auto;font-weight:400;--ink:#1f2822;--muted:#777f78;--green:#2d4937;--lime:#c7ed77;--epsi-blue:#0877b9;--epsi-orange:#f28c28;--epsi-yellow:#ffd447;--line:#e3e6df;--paper:#fff}
 *{box-sizing:border-box}
 body{margin:0;min-width:0;min-height:100vh;overflow-x:hidden}
 button,input,select{font:inherit}
@@ -10,7 +10,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .topbar{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 max(calc((100vw - 1180px)/2),5.2vw);gap:68px}
 .brand{display:flex;gap:10px;align-items:center;color:var(--ink);text-decoration:none;font-family:Manrope,sans-serif;font-weight:800;font-size:16px;letter-spacing:-.5px;white-space:nowrap}
 .brand small{display:block;font:600 8px "DM Sans",sans-serif;letter-spacing:1.4px;color:#8c938b;margin-top:1px}
-.brand-mark{width:34px;height:34px;display:grid;place-items:center;background:var(--green);color:var(--lime);border-radius:10px;font:800 20px Manrope,sans-serif}
+.brand-mark{width:34px;height:34px;display:grid;place-items:center;background:var(--epsi-blue);color:var(--epsi-yellow);border-radius:10px;font:800 20px Manrope,sans-serif;box-shadow:inset 0 -4px var(--epsi-orange)}
 .main-nav{align-self:stretch;display:flex;gap:34px}
 .nav-link{border:0;border-bottom:2px solid transparent;background:transparent;color:#737a73;font-size:13px;font-weight:600;padding:0 2px}
 .nav-link.active{color:var(--ink);border-bottom-color:var(--green)}
@@ -144,7 +144,7 @@ h1,h2,h3,p{margin-top:0}
 .auth-visual{position:relative;background:#253f32;color:white;padding:38px clamp(36px,8vw,120px);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
 .auth-visual:after{content:"";position:absolute;width:520px;height:520px;border:1px solid #ffffff20;border-radius:50%;right:-170px;bottom:-250px;box-shadow:0 0 0 40px #ffffff08,0 0 0 90px #ffffff06}
 .auth-visual .brand{color:white;z-index:1}
-.auth-visual .brand-mark{background:var(--lime);color:var(--green)}
+.auth-visual .brand-mark{background:var(--epsi-blue);color:var(--epsi-yellow);box-shadow:inset 0 -4px var(--epsi-orange)}
 .auth-visual .brand small{color:#afbaad}
 .auth-3d-scene{display:none}
 .visual-copy{position:relative;z-index:1;max-width:440px}
@@ -342,7 +342,7 @@ input,select,button{max-width:100%}
     padding:24px 24px 38px;
     justify-content:flex-start;
     gap:28px;
-    background:linear-gradient(145deg,#1d382b,#315640 72%,#466448);
+    background:linear-gradient(145deg,#073d68,#075d91 72%,#0877b9);
   }
   .auth-visual::before{
     content:"";
@@ -353,7 +353,7 @@ input,select,button{max-width:100%}
     top:38px;
     right:-100px;
     border-radius:50%;
-    background:radial-gradient(circle,#c7ed7738,transparent 68%);
+    background:radial-gradient(circle,#ffd44755 0%,#f28c2828 38%,transparent 68%);
   }
   .auth-visual::after{
     width:310px;
@@ -381,10 +381,10 @@ input,select,button{max-width:100%}
     right:34px;
     width:58px;
     height:58px;
-    border:1px solid #e6f2c788;
+    border:1px solid #ffd447bb;
     border-radius:50%;
-    background:radial-gradient(circle at 32% 28%,#e4f5ad,#9fbe6680 48%,#83a86220 72%);
-    box-shadow:inset -8px -9px 18px #183b3150,0 12px 28px #13271b30;
+    background:radial-gradient(circle at 32% 28%,#fff2a3,#ffd447 38%,#f28c287d 70%,#f28c2820);
+    box-shadow:inset -8px -9px 18px #073d6850,0 12px 28px #052b4938;
   }
   .auth-3d-card{
     top:87px;
@@ -393,8 +393,8 @@ input,select,button{max-width:100%}
     height:58px;
     border:1px solid #ffffff70;
     border-radius:10px;
-    background:linear-gradient(140deg,#ffffff38,#c7ed771a);
-    box-shadow:inset 1px 1px #ffffff45,0 14px 28px #14251d38;
+    background:linear-gradient(140deg,#f28c2870,#0877b948 70%);
+    box-shadow:inset 1px 1px #ffffff70,0 14px 28px #052b4945;
     backdrop-filter:blur(4px);
     transform:rotateX(14deg) rotateY(-20deg) rotateZ(-8deg);
   }
@@ -404,7 +404,7 @@ input,select,button{max-width:100%}
     left:12px;
     height:4px;
     border-radius:4px;
-    background:#e8f3ce9c;
+    background:#ffd447dc;
   }
   .auth-3d-card::before{top:15px;width:34px}
   .auth-3d-card::after{top:26px;width:49px;opacity:.65}
@@ -413,14 +413,15 @@ input,select,button{max-width:100%}
     bottom:5px;
     width:46px;
     height:46px;
-    border:2px solid #d5e7b7a6;
+    border:2px solid #f28c28d9;
     border-radius:50%;
-    box-shadow:0 0 18px #c7ed7740,inset 0 0 12px #c7ed7720;
+    box-shadow:0 0 18px #ffd44755,inset 0 0 12px #f28c2838;
   }
   .auth-visual .brand{font-size:15px}
   .auth-visual .brand-mark{width:36px;height:36px}
   .visual-copy{transform-style:preserve-3d}
   .visual-copy .eyebrow{font-size:8px}
+  .visual-copy h1 em{color:var(--epsi-yellow)}
   .visual-copy h1{
     font-size:clamp(29px,8vw,36px);
     line-height:1.05;
