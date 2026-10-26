@@ -827,7 +827,7 @@ app.use("/api", (_req, res) => {
   res.status(404).json({ error: "Route introuvable." });
 });
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
   const clientDirectory = path.resolve("dist/client");
   app.use(express.static(clientDirectory));
   app.get("/{*path}", (_req, res) => res.sendFile(path.join(clientDirectory, "index.html")));
