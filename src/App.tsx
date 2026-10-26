@@ -817,6 +817,65 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    const hasRooms = activeTab === "favorites" ? favorites.length > 0 : rooms.length > 0;
+    if (!user || (activeTab !== "book" && activeTab !== "favorites") || !hasRooms) return;
+    const page = document.querySelector<HTMLElement>(".main-content");
+    if (!page) return;
+
+    const media = gsap.matchMedia();
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      const context = gsap.context(() => {
+        gsap.fromTo(".results-section > .section-heading",
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        );
+        gsap.fromTo(".room-card",
+          { autoAlpha: 0, y: 34, z: -80, rotationX: 12, scale: 0.94, transformPerspective: 1000 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            z: 0,
+            rotationX: 0,
+            scale: 1,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: "power3.out",
+            clearProps: "transform",
+          },
+        );
+        if (activeTab === "book") {
+          gsap.to(".hero-orbit", {
+            rotation: 360,
+            duration: 24,
+            ease: "none",
+            repeat: -1,
+          });
+          gsap.to(".hero-cube", {
+            y: -10,
+            rotationY: 180,
+            rotationX: 12,
+            duration: 4,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+          });
+          gsap.to(".hero-orb", {
+            y: -14,
+            z: 16,
+            duration: 3,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+          });
+        }
+      }, page);
+      return () => context.revert();
+    });
+
+    return () => media.revert();
+  }, [activeTab, favorites, rooms, user]);
+
   if (loadingSession) {
     return <main className="loading-screen" aria-live="polite">Chargement de votre espace…</main>;
   }
@@ -895,64 +954,6 @@ function App() {
     ? favorites
     : rooms;
   const availableRoomIds = new Set(rooms.map((room) => room.id));
-
-  useEffect(() => {
-    if (!user || (activeTab !== "book" && activeTab !== "favorites")) return;
-    const page = document.querySelector<HTMLElement>(".main-content");
-    if (!page) return;
-
-    const media = gsap.matchMedia();
-    media.add("(prefers-reduced-motion: no-preference)", () => {
-      const context = gsap.context(() => {
-        gsap.fromTo(".results-section > .section-heading",
-          { autoAlpha: 0, y: 18 },
-          { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" },
-        );
-        gsap.fromTo(".room-card",
-          { autoAlpha: 0, y: 34, z: -80, rotationX: 12, scale: 0.94, transformPerspective: 1000 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            z: 0,
-            rotationX: 0,
-            scale: 1,
-            duration: 0.7,
-            stagger: 0.1,
-            ease: "power3.out",
-            clearProps: "transform",
-          },
-        );
-        if (activeTab === "book") {
-          gsap.to(".hero-orbit", {
-            rotation: 360,
-            duration: 24,
-            ease: "none",
-            repeat: -1,
-          });
-          gsap.to(".hero-cube", {
-            y: -10,
-            rotationY: 180,
-            rotationX: 12,
-            duration: 4,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true,
-          });
-          gsap.to(".hero-orb", {
-            y: -14,
-            z: 16,
-            duration: 3,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true,
-          });
-        }
-      }, page);
-      return () => context.revert();
-    });
-
-    return () => media.revert();
-  }, [activeTab, displayedRooms, user]);
 
   return (
     <div className="app-shell">
