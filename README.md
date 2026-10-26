@@ -226,7 +226,7 @@ Pour tester manuellement, vérifie les vues d’inscription, réservation, histo
 
 ## Déployer un environnement de test sur Vercel
 
-La configuration Vercel est dans `vercel.json`. Le dépôt doit être poussé vers GitHub, GitLab ou Bitbucket, puis importé dans Vercel. La configuration lance `npm run build`, sert `dist/client` et route les appels `/api` vers la fonction Express `api/[...path].ts`. Les projets sont réglés sur Node.js 22.
+La configuration Vercel est dans `vercel.json`. Le dépôt doit être poussé vers GitHub, GitLab ou Bitbucket, puis importé dans Vercel. La configuration lance `npm run build`, sert `dist/client` et réécrit les appels `/api/*` vers l’unique fonction Express `api/index.ts`. Les projets sont réglés sur Node.js 22.
 
 ### 1. Créer la base Neon
 
@@ -338,7 +338,7 @@ server/
   index.ts       API Express, sessions, rôles admin, messagerie et réservations
   set-user-role.ts Promotion ou retrait du rôle administrateur
 api/
-  [...path].ts   Point d’entrée Express pour les routes API Vercel
+  index.ts       Fonction Vercel et routage vers l’API Express
 src/
   App.tsx        Écrans React, parcours étudiant et administration
   email.ts       E-mails de confirmation et de contact via EmailJS
