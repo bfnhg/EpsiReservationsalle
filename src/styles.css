@@ -146,6 +146,7 @@ h1,h2,h3,p{margin-top:0}
 .auth-visual .brand{color:white;z-index:1}
 .auth-visual .brand-mark{background:var(--lime);color:var(--green)}
 .auth-visual .brand small{color:#afbaad}
+.auth-3d-scene{display:none}
 .visual-copy{position:relative;z-index:1;max-width:440px}
 .visual-copy .eyebrow{color:#b4c0b1}
 .visual-copy h1{font:700 clamp(42px,5vw,64px)/1.08 Manrope,sans-serif;letter-spacing:-3px;margin:20px 0}
@@ -353,18 +354,72 @@ input,select,button{max-width:100%}
     right:-100px;
     border-radius:50%;
     background:radial-gradient(circle,#c7ed7738,transparent 68%);
-    animation:auth-glow 7s ease-in-out infinite alternate;
   }
   .auth-visual::after{
     width:310px;
     height:310px;
     right:-125px;
     bottom:-230px;
-    animation:auth-orbit 24s linear infinite;
+  }
+  .auth-3d-scene{
+    position:absolute;
+    z-index:0;
+    inset:78px 0 0;
+    display:block;
+    overflow:hidden;
+    perspective:800px;
+    pointer-events:none;
+  }
+  .auth-3d-object{
+    position:absolute;
+    display:block;
+    transform-style:preserve-3d;
+    backface-visibility:hidden;
+  }
+  .auth-3d-orb{
+    top:14px;
+    right:34px;
+    width:58px;
+    height:58px;
+    border:1px solid #e6f2c788;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,#e4f5ad,#9fbe6680 48%,#83a86220 72%);
+    box-shadow:inset -8px -9px 18px #183b3150,0 12px 28px #13271b30;
+  }
+  .auth-3d-card{
+    top:87px;
+    right:30px;
+    width:78px;
+    height:58px;
+    border:1px solid #ffffff70;
+    border-radius:10px;
+    background:linear-gradient(140deg,#ffffff38,#c7ed771a);
+    box-shadow:inset 1px 1px #ffffff45,0 14px 28px #14251d38;
+    backdrop-filter:blur(4px);
+    transform:rotateX(14deg) rotateY(-20deg) rotateZ(-8deg);
+  }
+  .auth-3d-card::before,.auth-3d-card::after{
+    content:"";
+    position:absolute;
+    left:12px;
+    height:4px;
+    border-radius:4px;
+    background:#e8f3ce9c;
+  }
+  .auth-3d-card::before{top:15px;width:34px}
+  .auth-3d-card::after{top:26px;width:49px;opacity:.65}
+  .auth-3d-ring{
+    right:71px;
+    bottom:5px;
+    width:46px;
+    height:46px;
+    border:2px solid #d5e7b7a6;
+    border-radius:50%;
+    box-shadow:0 0 18px #c7ed7740,inset 0 0 12px #c7ed7720;
   }
   .auth-visual .brand{font-size:15px}
   .auth-visual .brand-mark{width:36px;height:36px}
-  .visual-copy{animation:auth-rise .65s .08s both}
+  .visual-copy{transform-style:preserve-3d}
   .visual-copy .eyebrow{font-size:8px}
   .visual-copy h1{
     font-size:clamp(29px,8vw,36px);
@@ -385,7 +440,7 @@ input,select,button{max-width:100%}
     border-radius:22px 22px 0 0;
     background:#fff;
     box-shadow:0 -10px 34px #14281b1c;
-    animation:auth-panel-enter .55s .12s both;
+    transform-style:preserve-3d;
   }
   .auth-form-wrap{margin:0 auto}
   .auth-form-wrap>.eyebrow{font-size:9px}
@@ -402,22 +457,4 @@ input,select,button{max-width:100%}
   }
   .button.primary.full{min-height:50px;margin-top:4px;font-size:14px}
   .privacy-note{font-size:10px;margin-top:20px}
-}
-
-@keyframes auth-rise{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes auth-panel-enter{
-  from{opacity:0;transform:translateY(18px)}
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes auth-glow{
-  from{transform:translate3d(-8px,5px,0) scale(.92);opacity:.65}
-  to{transform:translate3d(8px,-7px,0) scale(1.08);opacity:1}
-}
-@keyframes auth-orbit{to{transform:rotate(360deg)}}
-
-@media(prefers-reduced-motion:reduce){
-  .auth-visual::before,.auth-visual::after,.visual-copy,.auth-panel{animation:none}
 }

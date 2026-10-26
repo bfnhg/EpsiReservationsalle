@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { gsap } from "gsap";
 import { sendBookingConfirmation, sendContactEmail } from "./email";
 
 type User = { id: number; name: string; email: string; role: "student" | "admin" };
@@ -318,6 +319,63 @@ function App() {
       setLoadingRooms(false);
     }
   }, [start, end, minCapacity, accessibleOnly, activeTab]);
+
+  useEffect(() => {
+    if (loadingSession || user) return;
+    const authScreen = document.querySelector<HTMLElement>(".auth-layout");
+    if (!authScreen) return;
+
+    const media = gsap.matchMedia();
+    media.add("(max-width: 600px) and (prefers-reduced-motion: no-preference)", () => {
+      const context = gsap.context(() => {
+        gsap.timeline({ defaults: { ease: "power3.out" } })
+          .fromTo(".auth-panel",
+            { autoAlpha: 0, y: 36, rotationX: 12, transformPerspective: 900 },
+            { autoAlpha: 1, y: 0, rotationX: 0, duration: 0.8 },
+          )
+          .fromTo(".visual-copy",
+            { autoAlpha: 0, y: 18, rotationX: -8, transformPerspective: 800 },
+            { autoAlpha: 1, y: 0, rotationX: 0, duration: 0.65 },
+            0.12,
+          )
+          .fromTo(".auth-3d-object",
+            { autoAlpha: 0, z: -100, rotationX: 26, rotationY: -32, scale: 0.72 },
+            { autoAlpha: 1, z: 0, rotationX: 0, rotationY: 0, scale: 1, duration: 0.85, stagger: 0.12 },
+            0.18,
+          );
+
+        gsap.to(".auth-3d-card", {
+          y: -9,
+          rotationX: -7,
+          rotationY: 11,
+          duration: 2.6,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to(".auth-3d-orb", {
+          y: -12,
+          z: 18,
+          duration: 3.2,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to(".auth-3d-ring", {
+          rotationY: 180,
+          rotationZ: 28,
+          duration: 7,
+          ease: "none",
+          repeat: -1,
+          yoyo: true,
+        });
+      }, authScreen);
+
+      return () => context.revert();
+    });
+
+    return () => media.revert();
+  }, [loadingSession, user]);
 
   useEffect(() => {
     api<{ user: User }>("/api/auth/me")
@@ -768,6 +826,11 @@ function App() {
       <main className="auth-layout">
         <section className="auth-visual">
           <div className="brand"><span className="brand-mark">E</span><span>EPSI <small>STUDENT SPACE</small></span></div>
+          <div className="auth-3d-scene" aria-hidden="true">
+            <span className="auth-3d-object auth-3d-orb" />
+            <span className="auth-3d-object auth-3d-card" />
+            <span className="auth-3d-object auth-3d-ring" />
+          </div>
           <div className="visual-copy">
             <p className="eyebrow">VOTRE CAMPUS, À VOTRE RYTHME</p>
             <h1>Une salle.<br />Un créneau.<br /><em>Votre espace.</em></h1>
