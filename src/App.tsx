@@ -896,6 +896,35 @@ function App() {
     : rooms;
   const availableRoomIds = new Set(rooms.map((room) => room.id));
 
+  useEffect(() => {
+    if (!user || (activeTab !== "book" && activeTab !== "favorites") || displayedRooms.length === 0) return;
+    const results = document.querySelector<HTMLElement>(".results-section");
+    if (!results) return;
+
+    const media = gsap.matchMedia();
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      const context = gsap.context(() => {
+        gsap.fromTo(".room-card",
+          { autoAlpha: 0, y: 34, z: -80, rotationX: 12, scale: 0.94, transformPerspective: 1000 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            z: 0,
+            rotationX: 0,
+            scale: 1,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: "power3.out",
+            clearProps: "transform",
+          },
+        );
+      }, results);
+      return () => context.revert();
+    });
+
+    return () => media.revert();
+  }, [activeTab, displayedRooms, user]);
+
   return (
     <div className="app-shell">
       <header className="topbar">
