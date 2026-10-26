@@ -455,8 +455,8 @@ app.get("/api/reservations", requireAuth, async (req, res) => {
     return;
   }
   const reservations = await database.many(`
-      SELECT b.id, b.starts_at AS startsAt, b.ends_at AS endsAt, b.status,
-        b.room_id AS roomId, r.name AS roomName, r.building
+      SELECT b.id, b.starts_at AS "startsAt", b.ends_at AS "endsAt", b.status,
+        b.room_id AS "roomId", r.name AS "roomName", r.building
       FROM reservations b
       JOIN rooms r ON r.id = b.room_id
       WHERE b.user_id = ?
@@ -551,8 +551,8 @@ app.get("/api/messages", requireAuth, async (req, res) => {
     return;
   }
   const messages = await database.many(`
-    SELECT m.id, m.user_id AS userId, m.sender_id AS senderId,
-      u.name AS senderName, u.role AS senderRole, m.body, m.created_at AS createdAt
+    SELECT m.id, m.user_id AS "userId", m.sender_id AS "senderId",
+      u.name AS "senderName", u.role AS "senderRole", m.body, m.created_at AS "createdAt"
     FROM support_messages m
     JOIN users u ON u.id = m.sender_id
     WHERE m.user_id = ?
@@ -591,8 +591,8 @@ app.post("/api/messages", supportRateLimit, requireAuth, async (req, res) => {
   `, userId, userId, input.body);
   if (!result) throw new Error("L’enregistrement du message n’a pas retourné son identifiant.");
   const message = await database.one(`
-    SELECT m.id, m.user_id AS userId, m.sender_id AS senderId,
-      u.name AS senderName, u.role AS senderRole, m.body, m.created_at AS createdAt
+    SELECT m.id, m.user_id AS "userId", m.sender_id AS "senderId",
+      u.name AS "senderName", u.role AS "senderRole", m.body, m.created_at AS "createdAt"
     FROM support_messages m
     JOIN users u ON u.id = m.sender_id
     WHERE m.id = ?
@@ -602,10 +602,10 @@ app.post("/api/messages", supportRateLimit, requireAuth, async (req, res) => {
 
 app.get("/api/admin/messages", requireAdmin, async (_req, res) => {
   const messages = await database.many(`
-    SELECT m.id, m.user_id AS userId, m.sender_id AS senderId,
-      student.name AS studentName, student.email AS studentEmail,
-      sender.name AS senderName, sender.role AS senderRole,
-      m.body, m.created_at AS createdAt
+    SELECT m.id, m.user_id AS "userId", m.sender_id AS "senderId",
+      student.name AS "studentName", student.email AS "studentEmail",
+      sender.name AS "senderName", sender.role AS "senderRole",
+      m.body, m.created_at AS "createdAt"
     FROM support_messages m
     JOIN users student ON student.id = m.user_id
     JOIN users sender ON sender.id = m.sender_id
@@ -643,8 +643,8 @@ app.post("/api/admin/messages/:userId", supportRateLimit, requireAdmin, async (r
   `, student.id, adminId, input.body);
   if (!result) throw new Error("L’enregistrement du message n’a pas retourné son identifiant.");
   const message = await database.one(`
-    SELECT m.id, m.user_id AS userId, m.sender_id AS senderId,
-      u.name AS senderName, u.role AS senderRole, m.body, m.created_at AS createdAt
+    SELECT m.id, m.user_id AS "userId", m.sender_id AS "senderId",
+      u.name AS "senderName", u.role AS "senderRole", m.body, m.created_at AS "createdAt"
     FROM support_messages m
     JOIN users u ON u.id = m.sender_id
     WHERE m.id = ?
@@ -685,8 +685,8 @@ app.get("/api/admin/dashboard", requireAdmin, async (req, res) => {
   `, endsAt, startsAt);
 
   const reservations = await database.many(`
-    SELECT b.id, b.room_id AS roomId, b.starts_at AS startsAt, b.ends_at AS endsAt, b.status,
-      r.name AS roomName, r.building, u.id AS userId, u.name AS userName, u.email AS userEmail
+    SELECT b.id, b.room_id AS "roomId", b.starts_at AS "startsAt", b.ends_at AS "endsAt", b.status,
+      r.name AS "roomName", r.building, u.id AS "userId", u.name AS "userName", u.email AS "userEmail"
     FROM reservations b
     JOIN rooms r ON r.id = b.room_id
     JOIN users u ON u.id = b.user_id
@@ -694,8 +694,8 @@ app.get("/api/admin/dashboard", requireAdmin, async (req, res) => {
   `);
 
   const slotReservations = await database.many(`
-    SELECT b.id, b.room_id AS roomId, b.starts_at AS startsAt, b.ends_at AS endsAt, b.status,
-      r.name AS roomName, r.building, u.id AS userId, u.name AS userName, u.email AS userEmail
+    SELECT b.id, b.room_id AS "roomId", b.starts_at AS "startsAt", b.ends_at AS "endsAt", b.status,
+      r.name AS "roomName", r.building, u.id AS "userId", u.name AS "userName", u.email AS "userEmail"
     FROM reservations b
     JOIN rooms r ON r.id = b.room_id
     JOIN users u ON u.id = b.user_id
@@ -706,8 +706,8 @@ app.get("/api/admin/dashboard", requireAdmin, async (req, res) => {
   `, endsAt, startsAt);
 
   const favorites = await database.many(`
-    SELECT u.id AS userId, u.name AS userName, u.email AS userEmail,
-      r.id AS roomId, r.name AS roomName, r.building
+    SELECT u.id AS "userId", u.name AS "userName", u.email AS "userEmail",
+      r.id AS "roomId", r.name AS "roomName", r.building
     FROM room_favorites f
     JOIN users u ON u.id = f.user_id
     JOIN rooms r ON r.id = f.room_id
