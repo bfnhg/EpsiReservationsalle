@@ -42,7 +42,7 @@ Application responsive de réservation de salles de campus. Les étudiants peuve
 - **Authentification** : mot de passe haché avec bcryptjs et jeton JWT dans un cookie HTTP-only.
 - **E-mail** : SDK navigateur `@emailjs/browser`. EmailJS envoie les e-mails au moyen du service et du modèle configurés dans le compte EmailJS.
 
-L’interface appelle les routes `/api` du serveur. En développement, Vite transmet ces requêtes à `http://localhost:3001`. Sur Vercel, le dossier `dist/client` est servi comme site statique et les routes API Express sont exécutées comme une fonction Node.js ; les données sont conservées dans Neon PostgreSQL. En local, l’application utilise SQLite tant que `DATABASE_URL` n’est pas défini.
+L’interface appelle les routes `/api` du serveur. En développement, Vite transmet ces requêtes à `http://localhost:3001`. Sur Vercel, une fonction Express unique gère les routes API et sert les fichiers compilés de `dist/client` ; les données sont conservées dans Neon PostgreSQL. En local, l’application utilise SQLite tant que `DATABASE_URL` n’est pas défini.
 
 ## Prérequis et installation
 
@@ -226,7 +226,7 @@ Pour tester manuellement, vérifie les vues d’inscription, réservation, histo
 
 ## Déployer un environnement de test sur Vercel
 
-La configuration Vercel est dans `vercel.json`. Le dépôt doit être poussé vers GitHub, GitLab ou Bitbucket, puis importé dans Vercel. La configuration détecte `npm run build`, sert `dist/client` et envoie les routes API Express à la fonction `api/[...path].ts`. Les projets sont réglés sur Node.js 22.
+La configuration Vercel est dans `vercel.json`. Le dépôt doit être poussé vers GitHub, GitLab ou Bitbucket, puis importé dans Vercel. La configuration lance `npm run build`, détecte l’application Express exportée depuis `index.ts` et inclut `dist/client` dans la fonction pour servir l’interface et les routes API sous le même domaine. Les projets sont réglés sur Node.js 22.
 
 ### 1. Créer la base Neon
 
@@ -319,7 +319,7 @@ npm run build
 npm start
 ```
 
-L’application est alors servie sur le port `3001` par défaut. Sur Vercel, la plateforme sert `dist/client` et appelle la fonction Express ; il n’est pas nécessaire d’exécuter `npm start`.
+L’application est alors servie sur le port `3001` par défaut. Sur Vercel, la fonction Express sert l’interface depuis `dist/client` ainsi que les routes API ; il n’est pas nécessaire d’exécuter `npm start`.
 
 ## Dépannage
 
@@ -335,18 +335,17 @@ L’application est alors servie sur le port `3001` par défaut. Sur Vercel, la 
 ```text
 server/
   db.ts          Adaptateur SQLite/Neon, schéma et salles de démonstration
-  index.ts       API Express, sessions, rôles admin, messagerie et réservations
+  index.ts       Serveur Express, sessions, rôles admin, messagerie et réservations
   set-user-role.ts Promotion ou retrait du rôle administrateur
-api/
-  [...path].ts   Point d’entrée Express pour les routes API Vercel
 src/
   App.tsx        Écrans React, parcours étudiant et administration
   email.ts       E-mails de confirmation et de contact via EmailJS
   main.tsx       Point d’entrée React
   styles.css     Styles et adaptations responsive
 index.html       Document HTML
+index.ts         Point d’entrée Express reconnu par Vercel
 vite.config.ts   Serveur Vite et proxy /api
-vercel.json      Build, dossier statique et repli SPA Vercel
+vercel.json      Build Vercel et inclusion des fichiers statiques du client
 .env.example    Modèle des variables d’environnement
 ```
 #   E p s i R e s e r v a t i o n s a l l e  
