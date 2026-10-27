@@ -272,7 +272,7 @@ app.get("/api/rooms", requireAuth, async (req, res) => {
   }
 
   const filteredRooms = await database.many(`
-      SELECT r.id, r.name, r.building, r.capacity, r.accessible, r.equipment,
+      SELECT r.id, r.name, r.building, r.capacity, r.accessible, r.equipment, r.description,
         EXISTS(SELECT 1 FROM room_favorites f WHERE f.room_id = r.id AND f.user_id = ?) AS favorite
       FROM rooms r
       WHERE r.active = 1
@@ -493,7 +493,7 @@ app.get("/api/favorites", requireAuth, async (req, res) => {
     return;
   }
   const favorites = await database.many(`
-    SELECT r.id, r.name, r.building, r.capacity, r.accessible, r.equipment
+    SELECT r.id, r.name, r.building, r.capacity, r.accessible, r.equipment, r.description
     FROM room_favorites f
     JOIN rooms r ON r.id = f.room_id
     WHERE f.user_id = ? AND r.active = 1
@@ -672,7 +672,7 @@ app.get("/api/admin/dashboard", requireAdmin, async (req, res) => {
   }
 
   const rooms = await database.many(`
-    SELECT r.id, r.name, r.building, r.capacity, r.accessible, r.equipment, r.active,
+    SELECT r.id, r.name, r.building, r.capacity, r.accessible, r.equipment, r.description, r.active,
       CASE WHEN r.active = 1 AND NOT EXISTS (
         SELECT 1 FROM reservations b
         WHERE b.room_id = r.id
@@ -724,12 +724,13 @@ const roomSchema = z.object({
   capacity: z.number().int().min(1).max(1000),
   accessible: z.boolean(),
   equipment: z.string().trim().max(300),
+  description: z.string().trim().min(10).max(500),
   active: z.boolean().optional(),
 });
 
 app.get("/api/admin/rooms", requireAdmin, async (_req, res) => {
   const rooms = await database.many(`
-    SELECT id, name, building, capacity, accessible, equipment, active
+    SELECT id, name, building, capacity, accessible, equipment, description, active
     FROM rooms
     ORDER BY active DESC, name
   `);
@@ -741,10 +742,10 @@ app.post("/api/admin/rooms", requireAdmin, async (req, res) => {
   if (!input) return;
   try {
     const result = await database.one<{ id: number }>(`
-      INSERT INTO rooms (name, building, capacity, accessible, equipment, active)
-      VALUES (?, ?, ?, ?, ?, 1)
+      INSERT INTO rooms (name, building, capacity, accessible, equipment, description, active)
+      VALUES (?, ?, ?, ?, ?, ?, 1)
       RETURNING id
-    `, input.name, input.building, input.capacity, input.accessible ? 1 : 0, input.equipment);
+    `, input.name, input.building, input.capacity, input.accessible ? 1 : 0, input.equipment, input.description);
     if (!result) throw new Error("La création de la salle n’a pas retourné son identifiant.");
     res.status(201).json({ id: result.id });
   } catch (error) {
@@ -767,9 +768,9 @@ app.put("/api/admin/rooms/:id", requireAdmin, async (req, res) => {
   try {
     const result = await database.run(`
       UPDATE rooms
-      SET name = ?, building = ?, capacity = ?, accessible = ?, equipment = ?, active = ?
+      SET name = ?, building = ?, capacity = ?, accessible = ?, equipment = ?, description = ?, active = ?
       WHERE id = ?
-    `, input.name, input.building, input.capacity, input.accessible ? 1 : 0, input.equipment, input.active === false ? 0 : 1, roomId.data);
+    `, input.name, input.building, input.capacity, input.accessible ? 1 : 0, input.equipment, input.description, input.active === false ? 0 : 1, roomId.data);
     if (result.changes === 0) {
       res.status(404).json({ error: "Salle introuvable." });
       return;

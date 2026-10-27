@@ -10,7 +10,15 @@ type Room = {
   capacity: number;
   accessible: number;
   equipment: string;
+  description: string;
   favorite?: number;
+};
+const roomDescriptions: Record<string, string> = {
+  "Salle Atlas": "Un espace lumineux pour faire avancer vos projets en équipe, partager vos idées et garder le cap grâce à son tableau blanc.",
+  "Salle Horizon": "Le cadre idéal pour réunir votre équipe à distance : échangez naturellement et donnez de l’ampleur à vos réunions.",
+  "Salle Pixel": "Un cocon pratique et convivial pour travailler en petit comité, se concentrer ou donner vie à vos prochaines idées.",
+  "Salle Agora": "Pensée pour les grands échanges, cette salle rassemble vos équipes autour de présentations, ateliers et séances collaboratives.",
+  "Salle Studio": "Un espace intimiste pour avancer au calme, préparer une présentation ou travailler à deux dans les meilleures conditions.",
 };
 type AdminRoom = Room & { active: number };
 type BookingRules = { minDurationMinutes: number; maxDurationMinutes: number; minNoticeMinutes: number };
@@ -216,6 +224,7 @@ function App() {
   const [adminCapacity, setAdminCapacity] = useState("8");
   const [adminAccessible, setAdminAccessible] = useState(false);
   const [adminEquipment, setAdminEquipment] = useState("");
+  const [adminDescription, setAdminDescription] = useState("");
   const [adminError, setAdminError] = useState("");
   const [adminNotice, setAdminNotice] = useState("");
   const [adminBusy, setAdminBusy] = useState(false);
@@ -624,6 +633,7 @@ function App() {
     setAdminCapacity(String(room.capacity));
     setAdminAccessible(room.accessible === 1);
     setAdminEquipment(room.equipment);
+    setAdminDescription(room.description || roomDescriptions[room.name] || "");
     setAdminError("");
   }
 
@@ -634,6 +644,7 @@ function App() {
     setAdminCapacity("8");
     setAdminAccessible(false);
     setAdminEquipment("");
+    setAdminDescription("");
     setAdminError("");
   }
 
@@ -654,6 +665,7 @@ function App() {
           capacity: Number(adminCapacity),
           accessible: adminAccessible,
           equipment: adminEquipment,
+          description: adminDescription,
           ...(adminRoomId !== null ? { active: currentRoom?.active === 1 } : {}),
         }),
       });
@@ -682,6 +694,7 @@ function App() {
             capacity: room.capacity,
             accessible: room.accessible === 1,
             equipment: room.equipment,
+            description: room.description,
             active: true,
           }),
         });
@@ -1008,7 +1021,7 @@ function App() {
                   const available = availableRoomIds.has(room.id);
                   return <article className="room-card" key={room.id}>
                   <div className={`room-illustration room-tone-${index % 4}`}><span className="room-number">ESPACE · {String(index + 1).padStart(2, "0")}</span><span className="room-symbol" aria-hidden="true">{index % 2 ? "▱" : "⌂"}</span><button className={`favorite-button ${favorites.some((favorite) => favorite.id === room.id) ? "is-favorite" : ""}`} onClick={() => void toggleFavorite(room)} aria-label={favorites.some((favorite) => favorite.id === room.id) ? `Retirer ${room.name} des favoris` : `Ajouter ${room.name} aux favoris`} aria-pressed={favorites.some((favorite) => favorite.id === room.id)}>{favorites.some((favorite) => favorite.id === room.id) ? "♥" : "♡"}</button>{room.accessible === 1 && <span className="accessible-tag">♿ Accessible</span>}</div>
-                  <div className="room-details"><div className="room-title-row"><div><h3>{room.name}</h3><p>{room.building}</p></div><span className="capacity"><span aria-hidden="true">♧</span> {room.capacity}</span></div><p className="equipment">{room.equipment.split(" · ").map((item) => <span key={item}>{item}</span>)}</p><div className="room-card-footer"><span className={available ? "availability" : "unavailable"}>{available ? <><i /> Disponible</> : "Indisponible sur ce créneau"}</span><button className="button reserve-button" onClick={() => void bookRoom(room)} disabled={busy || !available}>Réserver <span aria-hidden="true">↗</span></button></div></div>
+                  <div className="room-details"><div className="room-title-row"><div><h3>{room.name}</h3><p>{room.building}</p></div><span className="capacity"><span aria-hidden="true">♧</span> {room.capacity}</span></div><p className="room-description">{room.description || roomDescriptions[room.name] || `Un espace accueillant pour ${room.capacity >= 12 ? "vos réunions et projets d’équipe" : "travailler en petit groupe ou vous concentrer"}, équipé pour vous accompagner tout au long de votre session.`}</p><p className="equipment">{room.equipment.split(" · ").map((item) => <span key={item}>{item}</span>)}</p><div className="room-card-footer"><span className={available ? "availability" : "unavailable"}>{available ? <><i /> Disponible</> : "Indisponible sur ce créneau"}</span><button className="button reserve-button" onClick={() => void bookRoom(room)} disabled={busy || !available}>Réserver <span aria-hidden="true">↗</span></button></div></div>
                 </article>;
                 })}</div>
               )}
@@ -1078,6 +1091,7 @@ function App() {
                   <label>Bâtiment et étage<input value={adminBuilding} onChange={(event) => setAdminBuilding(event.target.value)} minLength={2} maxLength={120} required placeholder="Bâtiment A · 1er étage" /></label>
                   <label>Capacité<input type="number" min="1" max="1000" value={adminCapacity} onChange={(event) => setAdminCapacity(event.target.value)} required /></label>
                   <label>Équipements<input value={adminEquipment} onChange={(event) => setAdminEquipment(event.target.value)} maxLength={300} placeholder="Écran · Tableau blanc" /></label>
+                  <label>Description<textarea value={adminDescription} onChange={(event) => setAdminDescription(event.target.value)} minLength={10} maxLength={500} required placeholder="Présentez l’ambiance et les usages de cette salle…" rows={3} /></label>
                   <label className="admin-checkbox"><input type="checkbox" checked={adminAccessible} onChange={(event) => setAdminAccessible(event.target.checked)} /> Accessible PMR</label>
                   <div className="modal-actions"><button type="button" className="button secondary" onClick={resetAdminRoomForm}>Effacer</button><button className="button primary" disabled={adminBusy}>{adminBusy ? "Enregistrement…" : adminRoomId === null ? "Ajouter" : "Enregistrer"}</button></div>
                 </form>
@@ -1097,7 +1111,7 @@ function App() {
             <section className="admin-panel room-management">
               <div className="admin-panel-heading"><div><p className="eyebrow">SALLES CONFIGURÉES</p><h3>Toutes les salles ({adminRooms.length})</h3></div></div>
               <div className="admin-room-list">{adminRooms.map((room) => <article className={`admin-room-row ${room.active === 0 ? "inactive-room" : ""}`} key={room.id}>
-                <div className="admin-room-info"><strong>{room.name}</strong><span>{room.building} · {room.capacity} places{room.accessible === 1 ? " · PMR" : ""}</span><small>{room.equipment || "Aucun équipement indiqué"}</small></div>
+                <div className="admin-room-info"><strong>{room.name}</strong><span>{room.building} · {room.capacity} places{room.accessible === 1 ? " · PMR" : ""}</span><small>{room.description || roomDescriptions[room.name] || "Description non renseignée"}{room.equipment ? ` · ${room.equipment}` : ""}</small></div>
                 <span className={room.active === 1 ? "status-pill confirmed" : "status-pill"}>{room.active === 1 ? "Active" : "Désactivée"}</span>
                 <div className="admin-room-actions"><button className="cancel-button" onClick={() => startEditingRoom(room)}>Modifier</button><button className="cancel-button" onClick={() => void toggleAdminRoom(room)}>{room.active === 1 ? "Désactiver" : "Réactiver"}</button></div>
               </article>)}</div>

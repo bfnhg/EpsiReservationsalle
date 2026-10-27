@@ -193,6 +193,7 @@ const schemaSqlite = `
     capacity INTEGER NOT NULL CHECK (capacity > 0),
     accessible INTEGER NOT NULL DEFAULT 0 CHECK (accessible IN (0, 1)),
     equipment TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
     active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1))
   );
   CREATE TABLE IF NOT EXISTS reservations (
@@ -235,6 +236,7 @@ const schemaPostgres = [
     id SERIAL PRIMARY KEY, name TEXT NOT NULL UNIQUE, building TEXT NOT NULL,
     capacity INTEGER NOT NULL CHECK (capacity > 0), accessible INTEGER NOT NULL DEFAULT 0
     CHECK (accessible IN (0, 1)), equipment TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
     active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1))
   )`,
   `CREATE TABLE IF NOT EXISTS reservations (
@@ -265,6 +267,7 @@ async function initializeDatabase() {
   if (useNeon) {
     neonPool = new Pool({ connectionString: databaseUrl });
     for (const sql of schemaPostgres) await neonPool.query(sql);
+    await neonPool.query("ALTER TABLE rooms ADD COLUMN IF NOT EXISTS description TEXT NOT NULL DEFAULT ''");
   } else {
     await initializeSqlite();
     sqlite!.run(schemaSqlite);
@@ -275,6 +278,9 @@ async function initializeDatabase() {
     const roomColumns = sqlite!.exec("PRAGMA table_info(rooms)")[0]?.values ?? [];
     if (!roomColumns.some((column) => column[1] === "active")) {
       sqlite!.run("ALTER TABLE rooms ADD COLUMN active INTEGER NOT NULL DEFAULT 1");
+    }
+    if (!roomColumns.some((column) => column[1] === "description")) {
+      sqlite!.run("ALTER TABLE rooms ADD COLUMN description TEXT NOT NULL DEFAULT ''");
     }
   }
 
