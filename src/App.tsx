@@ -1001,8 +1001,8 @@ function App() {
         {activeTab === "book" || activeTab === "favorites" ? (
           <>
             {activeTab === "book" && <section className="booking-hero">
-              <div className="hero-copy"><span className="hero-index">01 / RÉSERVER UN ESPACE</span><div className="booking-loader-stage" role="img" aria-label="EPSI, trouvez votre prochain espace"><ImageGenerationLoader cellSize={5} gap={2} bandHeight={56} duration={2200} effect="shimmer" colors={["#9bd8f1", "#ffffff"]} text="EPSI" overlayOpacity={0.12} className="booking-loader-canvas" /></div></div>
-              <div className="hero-art" aria-hidden="true"><div className="hero-orbit" /><div className="hero-orb" /><div className="hero-cube" /><div className="art-window"><div className="art-sun" /><div className="art-hill hill-one" /><div className="art-hill hill-two" /><div className="art-table" /><div className="art-chair" /></div><span className="art-caption">ESPACE POUR VOS IDÉES</span></div>
+          <div className="booking-loader-stage" aria-hidden="true"><ImageGenerationLoader cellSize={5} gap={2} bandHeight={56} duration={2200} effect="shimmer" colors={["#9bd8f1", "#ffffff"]} text="EPSI" overlayOpacity={0.12} className="booking-loader-canvas" /></div>
+          <div className="booking-hero-copy"><span className="hero-index">01 / RÉSERVER UN ESPACE</span><h2>Où souhaitez-vous vous installer ?</h2><p>Choisissez votre créneau, nous trouvons la salle.</p></div>
             </section>}
 
             {activeTab === "book" && <section className="search-panel" aria-label="Critères de recherche">
