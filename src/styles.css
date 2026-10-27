@@ -374,8 +374,10 @@ input,select,button{max-width:100%}
 }
 
 .booking-hero{
-  height:250px;
-  padding:34px 40px;
+  height:auto;
+  min-height:430px;
+  display:block;
+  padding:34px 40px 30px;
   border-radius:20px;
   background:
     radial-gradient(ellipse at 78% 18%,#ffffff1c,transparent 34%),
@@ -397,6 +399,13 @@ input,select,button{max-width:100%}
 .booking-hero-copy{position:relative;z-index:2;align-self:center;width:100%;margin:auto;text-align:center}
 .booking-hero-copy h2{margin:18px 0 9px;font:700 32px/1.18 Manrope,sans-serif;letter-spacing:-.8px;color:#fff}
 .booking-hero-copy p{margin:0;color:#d0e4f0;font-size:13px}
+.booking-hero .search-panel{position:relative;z-index:2;display:block;margin:24px 0 0;padding:20px 22px 16px;border:1px solid #ffffffb8;border-radius:16px;background:#ffffffed;box-shadow:0 20px 50px #062e4b45;backdrop-filter:blur(16px)}
+.booking-hero .search-panel-heading{margin-bottom:14px}
+.booking-hero .search-fields{grid-template-columns:1.15fr 1fr 1fr auto}
+.booking-filters{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;padding-top:13px;border-top:1px solid #e6eef2}
+.booking-filters .filter-caption{margin-bottom:5px}
+.booking-filters .capacity-chips{background:#f8fbfc}
+.booking-filters .check-filter{background:#fff8e1}
 .hero-index{
   display:inline-block;
   padding:7px 11px;
@@ -540,9 +549,22 @@ input,select,button{max-width:100%}
   .filters{width:100%;justify-content:space-between;flex-wrap:wrap}
 }
 @media(max-width:600px){
-  .booking-hero{height:228px;padding:26px 22px;border-radius:16px}
+  .booking-hero{min-height:0;padding:24px 16px 18px;border-radius:16px}
   .booking-hero-copy h2{max-width:330px;margin:17px auto 9px;font-size:25px}
   .booking-hero-copy p{max-width:250px;margin:0 auto;font-size:11px}
+  .booking-hero .search-panel{margin:18px 0 0;padding:15px 12px 12px;border-radius:13px}
+  .booking-hero .search-panel-heading{gap:9px;margin-bottom:12px}
+  .booking-hero .search-panel-icon{width:36px;height:36px;font-size:22px}
+  .booking-hero .search-panel-heading h2{font-size:14px}
+  .booking-hero .search-step{font-size:8px}
+  .booking-hero .search-fields{grid-template-columns:1fr 1fr;gap:8px}
+  .booking-hero .search-fields .search-field:first-child{grid-column:1/-1}
+  .booking-hero .search-field{padding:9px}
+  .booking-hero .search-field:first-child{padding-left:9px}
+  .booking-hero .search-button{grid-column:1/-1;min-height:44px}
+  .booking-filters{align-items:flex-start;flex-direction:column;gap:10px}
+  .booking-filters .capacity-chips{gap:3px}
+  .booking-filters .capacity-chip{min-width:37px;padding:5px 7px}
   .hero-art{right:-15%;width:62%;opacity:.82}
   .hero-orbit{right:10%;width:155px;height:155px}
   .hero-orb{right:8%;width:29px;height:29px}
