@@ -233,6 +233,17 @@ input,select,button{max-width:100%}
 @media(max-width:560px){.admin-filter-fields{grid-template-columns:1fr}.admin-favorite-grid{grid-template-columns:1fr}.admin-stat{padding:12px}.admin-stat strong{font-size:21px}}
 .support-section{padding-top:12px;min-height:460px}
 .support-panel,.support-conversations,.support-chat{min-width:0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px}
+.support-page-heading{position:relative;min-height:172px;overflow:hidden;align-items:center;margin-bottom:20px;padding:25px 30px;border:1px solid #d8eaf3;border-radius:16px;background:linear-gradient(112deg,#fff 20%,#f0f8fc 70%,#e4f2f8);box-shadow:0 12px 30px #075d9112}
+.support-page-heading>div:first-child{position:relative;z-index:2;max-width:560px}
+.support-page-heading h2{font:800 27px Manrope,sans-serif;letter-spacing:-.8px;color:#15394e}
+.support-hero-copy{max-width:440px;margin:9px 0 0;color:#627986;font-size:12px;line-height:1.6}
+.support-hero-art{position:absolute;inset:0 0 0 auto;width:38%;min-width:250px;perspective:700px;pointer-events:none}
+.support-art-orbit{position:absolute;width:156px;height:156px;right:26%;top:7px;border:1px solid #77b9d382;border-radius:50%;box-shadow:0 0 0 13px #74b6d21c,0 0 0 29px #74b6d212}
+.support-art-sphere{position:absolute;width:57px;height:57px;right:39%;top:45px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff 0 4%,#7bc6e6 18%,#1685ba 58%,#07517b 100%);box-shadow:inset -9px -10px 18px #06385760,0 15px 25px #075d9140;transform:translateZ(35px)}
+.support-art-card{position:absolute;display:flex;align-items:center;gap:8px;border:1px solid #ffffffb8;border-radius:10px;box-shadow:0 15px 28px #164c6428;backdrop-filter:blur(8px);transform-style:preserve-3d}
+.support-art-card-back{right:13%;top:39px;padding:9px 12px;background:#ffffff8c;color:#31718e;font-size:8px;font-weight:800;letter-spacing:1px;transform:rotateY(-17deg) rotateX(7deg)}
+.support-art-card-front{right:10%;bottom:28px;padding:12px 14px;background:linear-gradient(135deg,#fff,#eaf6fb);color:#0877b9;font-size:16px;transform:rotateY(-12deg) rotateX(5deg) translateZ(24px)}
+.support-art-card-front i{color:#365769;font-size:9px;font-style:normal;font-weight:700}
 .support-panel-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .support-panel-heading .eyebrow{margin-bottom:5px}
 .support-panel-heading h3{font:700 15px Manrope,sans-serif;margin:0}
@@ -272,6 +283,28 @@ input,select,button{max-width:100%}
 .support-chat-empty{min-height:230px;display:grid;place-items:center}
 .support-chat .support-thread{margin:12px 0}
 .support-chat .support-panel-heading{display:block}
+.student-support-panel{position:relative;overflow:hidden;border-color:#dbe8ed;border-radius:15px;padding:22px;background:linear-gradient(145deg,#fff,#fbfdfe);box-shadow:0 16px 38px #12374d12;transform-style:preserve-3d}
+.student-support-panel:before{content:"";position:absolute;top:-95px;right:-60px;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e6f5fb,#b9dfef 55%,#7dbbd533 72%,transparent 73%);pointer-events:none}
+.student-support-panel .support-panel-heading{position:relative;z-index:1;align-items:center;padding:2px 2px 15px;border-bottom:1px solid #e8f0f3}
+.student-support-panel .support-panel-heading h3{font-size:17px;color:#173c50}
+.support-channel{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #d9eaf1;border-radius:20px;background:#f2f9fc;color:#386b82;font-size:9px;font-weight:700}
+.support-channel i{width:7px;height:7px;border-radius:50%;background:#28a66a;box-shadow:0 0 0 3px #28a66a24}
+.student-support-panel .support-thread{position:relative;min-height:190px;max-height:460px;padding:20px;border:1px solid #e1edf2;border-radius:12px;background:radial-gradient(ellipse at 85% 12%,#e5f4fa 0,transparent 35%),linear-gradient(145deg,#f8fbfc,#f1f7f9);box-shadow:inset 0 2px 7px #17485b0a}
+.student-support-panel .support-empty{max-width:340px;align-self:center;margin:auto;padding:28px 18px;border:1px solid #e1edf2;border-radius:12px;background:#ffffffc9;box-shadow:0 10px 22px #164c6410;line-height:1.7}
+.student-support-panel .support-message{padding:12px 15px;border:1px solid #e1eaf0;border-radius:5px 15px 15px 15px;box-shadow:0 8px 18px #164c6410;transition:transform .2s ease,box-shadow .2s ease;transform:perspective(700px) rotateY(1deg)}
+.student-support-panel .support-message:hover{transform:perspective(700px) translateY(-2px) rotateY(0);box-shadow:0 12px 22px #164c6418}
+.student-support-panel .support-message-mine{border-color:#b9dceb;border-radius:15px 5px 15px 15px;background:linear-gradient(135deg,#e8f6fb,#d9edf6);transform:perspective(700px) rotateY(-1deg)}
+.student-support-panel .support-message-meta strong{color:#24536a}
+.student-support-panel .support-compose{position:relative;z-index:1;padding:15px;margin-top:16px;border:1px solid #e2edf1;border-radius:12px;background:#fff;box-shadow:0 8px 22px #164c640c}
+.student-support-panel .support-compose label{color:#315568;font-size:11px}
+.student-support-panel .support-compose textarea{min-height:100px;border-color:#dce8ed;border-radius:9px;background:#fbfdfe;font-size:12px;transition:border-color .2s,box-shadow .2s}
+.student-support-panel .support-compose textarea:focus{border-color:#62a9c8;outline:none;box-shadow:0 0 0 3px #62a9c82b}
+.student-support-panel .support-compose-footer>span{font-size:10px}
+.student-support-panel .support-compose-footer .button{border-radius:9px;box-shadow:0 7px 16px #075d912b;transition:transform .2s,box-shadow .2s}
+.student-support-panel .support-compose-footer .button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 20px #075d9138}
+@media(max-width:700px){.support-page-heading{min-height:158px;padding:22px}.support-page-heading h2{font-size:23px}.support-hero-art{right:-70px;opacity:.65}.support-page-heading>div:first-child{max-width:70%}}
+@media(max-width:560px){.support-page-heading{min-height:145px;padding:18px}.support-page-heading>div:first-child{max-width:76%}.support-page-heading h2{font-size:20px}.support-hero-copy{font-size:10px}.support-hero-art{right:-115px;opacity:.42}.student-support-panel{padding:14px}.student-support-panel .support-panel-heading{align-items:flex-start;gap:10px;flex-direction:column}.student-support-panel .support-thread{padding:12px}.student-support-panel .support-compose{padding:11px}.support-channel{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.student-support-panel .support-message,.student-support-panel .support-compose textarea,.student-support-panel .support-compose-footer .button{transition:none}}
 @media(max-width:700px){.support-inbox{grid-template-columns:1fr}.support-conversations{max-height:none}.support-conversation{padding:10px}.support-panel,.support-conversations,.support-chat{padding:14px}.support-table{min-width:680px}}
 @media(max-width:560px){.support-compose-footer{align-items:stretch;flex-direction:column}.support-compose-footer .button{width:100%}.support-message{max-width:96%}.support-compose textarea{min-height:110px}}
 

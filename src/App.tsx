@@ -1119,11 +1119,11 @@ function App() {
           </section>
         ) : activeTab === "messages" ? (
           <section className="support-section">
-            <div className="section-heading"><div><p className="eyebrow">AIDE ET ASSISTANCE</p><h2>Contacter l’administration</h2></div></div>
+            <div className="section-heading support-page-heading"><div><p className="eyebrow">AIDE ET ASSISTANCE</p><h2>On est là pour vous aider<span className="wave">.</span></h2><p className="support-hero-copy">Une question sur votre réservation ? Écrivez-nous, l’équipe EPSI vous répondra ici.</p></div><div className="support-hero-art" aria-hidden="true"><span className="support-art-orbit" /><span className="support-art-sphere" /><span className="support-art-card support-art-card-back">EPSI · SUPPORT</span><span className="support-art-card support-art-card-front">✉ <i>Votre équipe est à l’écoute</i></span></div></div>
             {supportNotice && <div className="notice" role="status"><span>✓</span>{supportNotice}<button onClick={() => setSupportNotice("")} aria-label="Fermer">×</button></div>}
             {supportError && <div className="error-banner" role="alert"><span>!</span>{supportError}<button onClick={() => setSupportError("")} aria-label="Fermer">×</button></div>}
-            <section className="support-panel">
-              <div className="support-panel-heading"><div><p className="eyebrow">VOTRE CONVERSATION</p><h3>Messages avec l’équipe EPSI</h3></div></div>
+            <section className="support-panel student-support-panel">
+              <div className="support-panel-heading"><div><p className="eyebrow">VOTRE CONVERSATION</p><h3>Messages avec l’équipe EPSI</h3></div><span className="support-channel"><i /> Espace de discussion</span></div>
               <div className="support-thread" aria-live="polite">
                 {supportMessages.length === 0 ? <p className="support-empty">Décrivez votre problème de réservation ; l’équipe d’administration vous répondra ici.</p> : supportMessages.map((message) => <article className={`support-message ${message.senderRole === user.role ? "support-message-mine" : ""}`} key={message.id}>
                   <div className="support-message-meta"><strong>{message.senderRole === "admin" ? "Administration" : message.senderName}</strong><time dateTime={message.createdAt}>{formatMessageTimestamp(message.createdAt)}</time></div>
