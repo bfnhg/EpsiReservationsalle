@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { gsap } from "gsap";
 import { sendBookingConfirmation, sendContactEmail } from "./email";
+import { ImageGenerationLoader } from "./components/ui/image-generation-loader";
 
 type User = { id: number; name: string; email: string; role: "student" | "admin" };
 type Room = {
@@ -1016,7 +1017,7 @@ function App() {
 
             <section className="results-section">
               <div className="section-heading"><div><p className="eyebrow">{activeTab === "favorites" ? "VOS SALLES PRÉFÉRÉES" : "SÉLECTION EPSI · DISPONIBILITÉS EN TEMPS RÉEL"}</p><h2>{activeTab === "favorites" ? "Mes favoris" : "Trouvez votre salle"} <span className="result-count">{(activeTab === "favorites" ? favorites.length : rooms.length).toString().padStart(2, "0")}</span></h2><p className="results-subtitle">{activeTab === "favorites" ? "Vos espaces enregistrés pour les retrouver facilement." : "Choisissez l’espace idéal parmi les salles disponibles."}</p></div>{activeTab === "book" && <div className="filters"><div className="capacity-filter" role="group" aria-label="Filtrer par capacité minimum"><span className="filter-caption">CAPACITÉ</span><div className="capacity-chips">{[["", "Toutes"], ["4", "4+"], ["8", "8+"], ["12", "12+"], ["20", "20+"]].map(([value, label]) => <button type="button" key={value || "all"} className={minCapacity === value ? "capacity-chip selected" : "capacity-chip"} aria-pressed={minCapacity === value} onClick={() => setMinCapacity(value)}>{label}</button>)}</div></div><label className={accessibleOnly ? "check-filter selected" : "check-filter"}><input type="checkbox" checked={accessibleOnly} onChange={(event) => setAccessibleOnly(event.target.checked)} /><span aria-hidden="true">♿</span><span>PMR</span></label></div>}</div>
-              {activeTab === "book" && loadingRooms ? <div className="empty-state">Recherche des disponibilités…</div> : displayedRooms.length === 0 ? <div className="empty-state"><span className="empty-icon">{activeTab === "favorites" ? "♡" : "⌕"}</span><h3>{activeTab === "favorites" ? "Aucune salle favorite" : "Aucune salle disponible"}</h3><p>{activeTab === "favorites" ? "Ajoutez une salle avec le cœur pour la retrouver ici." : "Essayez un autre créneau ou modifiez vos filtres."}</p></div> : (
+              {activeTab === "book" && loadingRooms ? <div className="room-loading" role="status" aria-live="polite"><div className="room-loader-stage"><ImageGenerationLoader cellSize={5} gap={2} bandHeight={56} duration={2200} effect="shimmer" colors={["#9bd8f1", "#0877b9"]} text="EPSI" overlayOpacity={0.12} className="room-loader-canvas" /></div><p>Recherche des disponibilités pour votre créneau…</p></div> : displayedRooms.length === 0 ? <div className="empty-state"><span className="empty-icon">{activeTab === "favorites" ? "♡" : "⌕"}</span><h3>{activeTab === "favorites" ? "Aucune salle favorite" : "Aucune salle disponible"}</h3><p>{activeTab === "favorites" ? "Ajoutez une salle avec le cœur pour la retrouver ici." : "Essayez un autre créneau ou modifiez vos filtres."}</p></div> : (
                 <div className="room-grid">{displayedRooms.map((room, index) => {
                   const available = availableRoomIds.has(room.id);
                   return <article className="room-card" key={room.id}>
