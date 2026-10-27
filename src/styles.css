@@ -375,9 +375,9 @@ input,select,button{max-width:100%}
 
 .booking-hero{
   height:auto;
-  min-height:250px;
+  min-height:0;
   display:block;
-  padding:34px 40px;
+  padding:32px 30px 28px;
   border-radius:20px;
   background:
     radial-gradient(ellipse at 78% 18%,#ffffff1c,transparent 34%),
@@ -399,10 +399,12 @@ input,select,button{max-width:100%}
 .booking-hero-copy{position:relative;z-index:2;align-self:center;width:100%;margin:auto;text-align:center}
 .booking-hero-copy h2{margin:18px 0 9px;font:700 32px/1.18 Manrope,sans-serif;letter-spacing:-.8px;color:#fff}
 .booking-hero-copy p{margin:0;color:#d0e4f0;font-size:13px}
-.booking-search-panel{position:relative;z-index:3;display:block;margin:-26px 20px 0;padding:20px 22px 16px;border:1px solid #d5edf7;border-radius:17px;background:linear-gradient(125deg,#fff 15%,#f4fbfe 75%,#e6f5fb);box-shadow:0 20px 45px #075d9124,0 2px 8px #075d910b;backdrop-filter:blur(16px);animation:filter-panel-arrive .6s cubic-bezier(.2,.8,.2,1) both}
-.booking-search-panel::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;border-radius:17px 0 0 17px;background:linear-gradient(180deg,#9bd8f1,#0877b9 65%,#f28c28)}
+.booking-search-panel{position:relative;z-index:3;display:block;width:100%;margin:24px 0 0;padding:20px 22px 16px;border:1px solid #ffffff80;border-radius:17px;background:linear-gradient(125deg,#ffffffed 15%,#f2faffed 75%,#e5f4faed);box-shadow:0 18px 40px #052b4940,0 2px 8px #fff3;backdrop-filter:blur(16px);animation:filter-panel-arrive .6s cubic-bezier(.2,.8,.2,1) both}
+.booking-search-panel::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;border-radius:17px 0 0 17px;background:linear-gradient(180deg,#0877b9 0%,#075d91 68%,#f28c28)}
 .booking-search-panel .search-panel-heading{margin-bottom:14px}
 .booking-search-panel .search-panel-icon{background:linear-gradient(145deg,#e7f7fd,#cceaf6);box-shadow:inset 0 1px 3px #fff,0 5px 12px #0877b918}
+.booking-search-panel .search-panel-heading .eyebrow{color:#0877b9}
+.booking-search-panel .search-step b{color:#f28c28}
 .booking-search-panel .search-fields{grid-template-columns:1.15fr 1fr 1fr auto}
 .booking-search-panel .search-field{border-color:#dbeaf0;background:linear-gradient(145deg,#fff,#f4f9fb);box-shadow:0 3px 8px #164c6408}
 .booking-search-panel .search-field:hover{border-color:#a6d4e6;box-shadow:0 6px 15px #0877b918}
@@ -414,8 +416,8 @@ input,select,button{max-width:100%}
 .booking-filters .capacity-chips{border-color:#d8eaf1;background:#f4fafc;box-shadow:inset 0 1px 3px #164c640b}
 .booking-filters .capacity-chip{border-radius:7px}
 .booking-filters .capacity-chip.selected{background:linear-gradient(135deg,#1594c9,#075d91);box-shadow:0 4px 11px #0877b935}
-.booking-filters .check-filter{border-color:#cfe6ef;background:linear-gradient(135deg,#f1f9fc,#e5f4fa);color:#315b70}
-.booking-filters .check-filter.selected{border-color:#78bfdc;background:linear-gradient(135deg,#e3f5fc,#d3edf7);box-shadow:0 5px 14px #0877b91f}
+.booking-filters .check-filter{border-color:#f4d39c;background:linear-gradient(135deg,#fffaf0,#fff1d9);color:#74501e}
+.booking-filters .check-filter.selected{border-color:#f28c28;background:linear-gradient(135deg,#fff1d9,#ffe3b7);box-shadow:0 5px 14px #f28c2826}
 .booking-filters .check-filter input{accent-color:#0877b9}
 .hero-index{
   display:inline-block;
@@ -560,11 +562,15 @@ input,select,button{max-width:100%}
   .filters{width:100%;justify-content:space-between;flex-wrap:wrap}
 }
 @keyframes filter-panel-arrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){
+  .booking-search-panel .search-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .booking-search-panel .search-button{grid-column:1/-1}
+}
 @media(max-width:600px){
-  .booking-hero{min-height:0;padding:24px 16px;border-radius:16px}
+  .booking-hero{min-height:0;padding:24px 16px 18px;border-radius:16px}
   .booking-hero-copy h2{max-width:330px;margin:17px auto 9px;font-size:25px}
   .booking-hero-copy p{max-width:250px;margin:0 auto;font-size:11px}
-  .search-panel.booking-search-panel{margin:-18px 5px 0;padding:15px 12px 12px;border-radius:13px}
+  .search-panel.booking-search-panel{width:100%;margin:18px 0 0;padding:15px 12px 12px;border-radius:13px}
   .booking-search-panel .search-panel-heading{gap:9px;margin-bottom:12px}
   .booking-search-panel .search-panel-icon{width:36px;height:36px;font-size:22px}
   .booking-search-panel .search-panel-heading h2{font-size:14px}
