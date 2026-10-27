@@ -1127,9 +1127,11 @@ function App() {
             <section className="support-panel student-support-panel">
               <div className="support-panel-heading"><div><p className="eyebrow">VOTRE CONVERSATION</p><h3>Messages avec l’équipe EPSI</h3></div><span className="support-channel"><i /> Espace de discussion</span></div>
               <div className="support-thread" aria-live="polite">
-                {supportMessages.length === 0 ? <p className="support-empty">Décrivez votre problème de réservation ; l’équipe d’administration vous répondra ici.</p> : supportMessages.map((message) => <article className={`support-message ${message.senderRole === user.role ? "support-message-mine" : ""}`} key={message.id}>
-                  <div className="support-message-meta"><strong>{message.senderRole === "admin" ? "Administration" : message.senderName}</strong><time dateTime={message.createdAt}>{formatMessageTimestamp(message.createdAt)}</time></div>
-                  <p>{message.body}</p>
+                {supportMessages.length === 0 ? <p className="support-empty">Décrivez votre problème de réservation ; l’équipe d’administration vous répondra ici.</p> : supportMessages.map((message, index) => <article className={`support-message ${message.senderRole === user.role ? "support-message-mine" : ""}`} key={message.id} style={{ "--message-index": index } as React.CSSProperties}>
+                  <span className={`support-message-avatar ${message.senderRole === "admin" ? "support-avatar-admin" : ""}`} aria-hidden="true">{message.senderRole === "admin" ? "E" : message.senderName.trim().charAt(0).toUpperCase()}</span>
+                  <div className="support-message-bubble"><div className="support-message-meta"><strong>{message.senderRole === "admin" ? "Équipe EPSI" : message.senderName}</strong><time dateTime={message.createdAt}>{formatMessageTimestamp(message.createdAt)}</time></div>
+                    <p>{message.body}</p>
+                  </div>
                 </article>)}
               </div>
               <form className="support-compose" onSubmit={(event) => void sendStudentMessage(event)}>
@@ -1163,9 +1165,11 @@ function App() {
               <section className="support-chat" aria-label="Conversation sélectionnée">
                 {selectedConversation.length === 0 ? <div className="support-empty support-chat-empty">Sélectionnez une conversation pour lire et répondre.</div> : <>
                   <div className="support-panel-heading"><div><p className="eyebrow">ÉTUDIANT</p><h3>{selectedConversation[0].studentName}</h3><span className="support-student-email">{selectedConversation[0].studentEmail}</span></div></div>
-                  <div className="support-thread" aria-live="polite">{selectedConversation.map((message) => <article className={`support-message ${message.senderRole === "admin" ? "support-message-mine" : ""}`} key={message.id}>
-                    <div className="support-message-meta"><strong>{message.senderRole === "admin" ? "Administration" : message.senderName}</strong><time dateTime={message.createdAt}>{formatMessageTimestamp(message.createdAt)}</time></div>
-                    <p>{message.body}</p>
+                  <div className="support-thread" aria-live="polite">{selectedConversation.map((message, index) => <article className={`support-message ${message.senderRole === "admin" ? "support-message-mine" : ""}`} key={message.id} style={{ "--message-index": index } as React.CSSProperties}>
+                    <span className={`support-message-avatar ${message.senderRole === "admin" ? "support-avatar-admin" : ""}`} aria-hidden="true">{message.senderRole === "admin" ? "E" : message.senderName.trim().charAt(0).toUpperCase()}</span>
+                    <div className="support-message-bubble"><div className="support-message-meta"><strong>{message.senderRole === "admin" ? "Équipe EPSI" : message.senderName}</strong><time dateTime={message.createdAt}>{formatMessageTimestamp(message.createdAt)}</time></div>
+                      <p>{message.body}</p>
+                    </div>
                   </article>)}</div>
                   <form className="support-compose" onSubmit={(event) => void sendAdminReply(event)}>
                     <label htmlFor="admin-support-reply">Votre réponse</label>
