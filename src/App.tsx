@@ -177,6 +177,18 @@ function downloadReservationCalendar(reservation: Reservation): void {
   URL.revokeObjectURL(url);
 }
 
+function MenuIcon({ name }: { name: "booking" | "calendar" | "heart" | "message" | "dashboard" }) {
+  return (
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      {name === "booking" && <><path d="M4 20V9l8-5 8 5v11" /><path d="M9 20v-6h6v6" /></>}
+      {name === "calendar" && <><rect x="3.5" y="5" width="17" height="16" rx="2.5" /><path d="M7.5 3v4M16.5 3v4M3.5 10h17" /><path d="m9 15 2 2 4-4" /></>}
+      {name === "heart" && <path d="M20.4 8.8c0 4.1-8.4 10-8.4 10s-8.4-5.9-8.4-10A4.3 4.3 0 0 1 12 6.1a4.3 4.3 0 0 1 8.4 2.7Z" />}
+      {name === "message" && <><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-7.5a7.5 7.5 0 1 1 17-2Z" /><path d="M8 11h8M8 14.5h5" /></>}
+      {name === "dashboard" && <><rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="5" rx="1.5" /><rect x="13" y="10" width="8" height="11" rx="1.5" /><rect x="3" y="13" width="8" height="8" rx="1.5" /></>}
+    </svg>
+  );
+}
+
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
@@ -976,17 +988,17 @@ function App() {
         <nav className="main-nav" aria-label="Navigation principale">
           {user.role === "admin" ? (
             <>
-              <button className={activeTab === "admin" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin" ? "page" : undefined} onClick={() => setActiveTab("admin")}>Tableau de bord admin</button>
-              <button className={activeTab === "admin-messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin-messages" ? "page" : undefined} onClick={() => setActiveTab("admin-messages")}>Messages <span className="count">{adminMessageGroups.size}</span></button>
+              <button className={activeTab === "admin" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin" ? "page" : undefined} onClick={() => setActiveTab("admin")}><MenuIcon name="dashboard" /><span className="nav-label">Tableau de bord</span></button>
+              <button className={activeTab === "admin-messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin-messages" ? "page" : undefined} onClick={() => setActiveTab("admin-messages")}><MenuIcon name="message" /><span className="nav-label">Messages</span><span className="count">{adminMessageGroups.size}</span></button>
             </>
           ) : <>
-            <button className={activeTab === "book" ? "nav-link active" : "nav-link"} onClick={() => setActiveTab("book")}>Réserver <span>↗</span></button>
-            <button className={activeTab === "history" ? "nav-link active" : "nav-link"} onClick={() => setActiveTab("history")}>Mes réservations <span className="count">{activeReservations.length}</span></button>
-            <button className={activeTab === "favorites" ? "nav-link active" : "nav-link"} onClick={() => setActiveTab("favorites")}>Favoris <span className="count">{favorites.length}</span></button>
-            <button className={activeTab === "messages" ? "nav-link active" : "nav-link"} onClick={() => setActiveTab("messages")}>Contact</button>
+            <button className={activeTab === "book" ? "nav-link active" : "nav-link"} aria-current={activeTab === "book" ? "page" : undefined} onClick={() => setActiveTab("book")}><MenuIcon name="booking" /><span className="nav-label">Réserver</span></button>
+            <button className={activeTab === "history" ? "nav-link active" : "nav-link"} aria-current={activeTab === "history" ? "page" : undefined} onClick={() => setActiveTab("history")}><MenuIcon name="calendar" /><span className="nav-label">Mes réservations</span><span className="count">{activeReservations.length}</span></button>
+            <button className={activeTab === "favorites" ? "nav-link active" : "nav-link"} aria-current={activeTab === "favorites" ? "page" : undefined} onClick={() => setActiveTab("favorites")}><MenuIcon name="heart" /><span className="nav-label">Favoris</span><span className="count">{favorites.length}</span></button>
+            <button className={activeTab === "messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "messages" ? "page" : undefined} onClick={() => setActiveTab("messages")}><MenuIcon name="message" /><span className="nav-label">Contact</span></button>
           </>}
         </nav>
-        <div className="user-menu"><span className="avatar">{user.name.slice(0, 1).toUpperCase()}</span><span className="user-name">{user.name}</span><button className="logout-button" onClick={logout} aria-label="Se déconnecter" title="Se déconnecter">↗</button></div>
+        <div className="user-menu"><span className="avatar">{user.name.slice(0, 1).toUpperCase()}</span><span className="user-name">{user.name}</span><button className="logout-button" onClick={logout} aria-label="Se déconnecter" title="Se déconnecter"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17l5-5-5-5M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></svg></button></div>
       </header>
 
       <main className="main-content">
