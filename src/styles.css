@@ -382,6 +382,7 @@ input,select,button{max-width:100%}
   gap:28px;
   box-shadow:0 6px 24px #12374d08;
 }
+.menu-toggle{display:none}
 .brand{flex-shrink:0}
 .main-nav{
   align-self:center;
@@ -457,29 +458,44 @@ input,select,button{max-width:100%}
 @media(max-width:820px){
   .topbar{
     display:grid;
-    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-columns:minmax(0,1fr) auto auto;
     height:auto;
     min-height:74px;
     gap:10px 16px;
     padding:12px 22px;
   }
+  .brand{grid-column:1}
+  .menu-toggle{
+    grid-column:2;
+    display:grid;
+    width:40px;
+    height:40px;
+    place-items:center;
+    border:1px solid #e6eaed;
+    border-radius:11px;
+    background:#fff;
+    color:#31566a;
+  }
+  .menu-toggle svg{width:20px;height:20px}
   .main-nav{
     grid-column:1/-1;
     order:initial;
+    display:none;
     width:100%;
     height:auto;
     justify-content:stretch;
     gap:5px;
     overflow:visible;
   }
+  .main-nav.is-open{display:flex}
   .nav-link{flex:1;padding:0 10px;font-size:12px}
-  .user-menu{grid-column:2;margin-left:0}
+  .user-menu{grid-column:3;margin-left:0}
   .user-name{display:none}
   .main-content{padding-top:28px}
 }
 @media(max-width:600px){
   .topbar{gap:10px 12px;padding:12px 16px}
-  .main-nav{
+  .main-nav.is-open{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
     gap:7px;
@@ -508,6 +524,7 @@ input,select,button{max-width:100%}
 @media(max-width:380px){
   .topbar{padding:10px 12px}
   .nav-link{gap:6px;padding:6px 8px;font-size:10px}
+  .menu-toggle{width:36px;height:36px}
   .logout-button{width:34px;height:34px}
 }
 @media(prefers-reduced-motion:reduce){

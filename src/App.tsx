@@ -210,6 +210,7 @@ function App() {
   const [pageError, setPageError] = useState("");
   const [notice, setNotice] = useState("");
   const [activeTab, setActiveTab] = useState<"book" | "history" | "favorites" | "admin" | "messages" | "admin-messages">("book");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [favorites, setFavorites] = useState<Room[]>([]);
   const [bookingRules, setBookingRules] = useState<BookingRules>({
     minDurationMinutes: 30,
@@ -985,17 +986,22 @@ function App() {
     <div className="app-shell">
       <header className="topbar">
         <a href="#" className="brand" aria-label="EPSI, accueil"><span className="brand-mark">E</span><span>EPSI <small>STUDENT SPACE</small></span></a>
-        <nav className="main-nav" aria-label="Navigation principale">
+        <button className="menu-toggle" type="button" aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} aria-controls="main-navigation" onClick={() => setMenuOpen((open) => !open)}>
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            {menuOpen ? <path d="m6 6 12 12M18 6 6 18" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+          </svg>
+        </button>
+        <nav id="main-navigation" className={menuOpen ? "main-nav is-open" : "main-nav"} aria-label="Navigation principale">
           {user.role === "admin" ? (
             <>
-              <button className={activeTab === "admin" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin" ? "page" : undefined} onClick={() => setActiveTab("admin")}><MenuIcon name="dashboard" /><span className="nav-label">Tableau de bord</span></button>
-              <button className={activeTab === "admin-messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin-messages" ? "page" : undefined} onClick={() => setActiveTab("admin-messages")}><MenuIcon name="message" /><span className="nav-label">Messages</span><span className="count">{adminMessageGroups.size}</span></button>
+              <button className={activeTab === "admin" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin" ? "page" : undefined} onClick={() => { setActiveTab("admin"); setMenuOpen(false); }}><MenuIcon name="dashboard" /><span className="nav-label">Tableau de bord</span></button>
+              <button className={activeTab === "admin-messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "admin-messages" ? "page" : undefined} onClick={() => { setActiveTab("admin-messages"); setMenuOpen(false); }}><MenuIcon name="message" /><span className="nav-label">Messages</span><span className="count">{adminMessageGroups.size}</span></button>
             </>
           ) : <>
-            <button className={activeTab === "book" ? "nav-link active" : "nav-link"} aria-current={activeTab === "book" ? "page" : undefined} onClick={() => setActiveTab("book")}><MenuIcon name="booking" /><span className="nav-label">Réserver</span></button>
-            <button className={activeTab === "history" ? "nav-link active" : "nav-link"} aria-current={activeTab === "history" ? "page" : undefined} onClick={() => setActiveTab("history")}><MenuIcon name="calendar" /><span className="nav-label">Mes réservations</span><span className="count">{activeReservations.length}</span></button>
-            <button className={activeTab === "favorites" ? "nav-link active" : "nav-link"} aria-current={activeTab === "favorites" ? "page" : undefined} onClick={() => setActiveTab("favorites")}><MenuIcon name="heart" /><span className="nav-label">Favoris</span><span className="count">{favorites.length}</span></button>
-            <button className={activeTab === "messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "messages" ? "page" : undefined} onClick={() => setActiveTab("messages")}><MenuIcon name="message" /><span className="nav-label">Contact</span></button>
+            <button className={activeTab === "book" ? "nav-link active" : "nav-link"} aria-current={activeTab === "book" ? "page" : undefined} onClick={() => { setActiveTab("book"); setMenuOpen(false); }}><MenuIcon name="booking" /><span className="nav-label">Réserver</span></button>
+            <button className={activeTab === "history" ? "nav-link active" : "nav-link"} aria-current={activeTab === "history" ? "page" : undefined} onClick={() => { setActiveTab("history"); setMenuOpen(false); }}><MenuIcon name="calendar" /><span className="nav-label">Mes réservations</span><span className="count">{activeReservations.length}</span></button>
+            <button className={activeTab === "favorites" ? "nav-link active" : "nav-link"} aria-current={activeTab === "favorites" ? "page" : undefined} onClick={() => { setActiveTab("favorites"); setMenuOpen(false); }}><MenuIcon name="heart" /><span className="nav-label">Favoris</span><span className="count">{favorites.length}</span></button>
+            <button className={activeTab === "messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "messages" ? "page" : undefined} onClick={() => { setActiveTab("messages"); setMenuOpen(false); }}><MenuIcon name="message" /><span className="nav-label">Contact</span></button>
           </>}
         </nav>
         <div className="user-menu"><span className="avatar">{user.name.slice(0, 1).toUpperCase()}</span><span className="user-name">{user.name}</span><button className="logout-button" onClick={logout} aria-label="Se déconnecter" title="Se déconnecter"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17l5-5-5-5M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></svg></button></div>
