@@ -134,6 +134,16 @@ h1,h2,h3,p{margin-top:0}
 .profile-details div{display:flex;flex-direction:column;gap:4px}
 .profile-details dt{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:#7a847b}
 .profile-details dd{margin:0;font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.profile-modal{max-height:calc(100vh - 40px);overflow-y:auto}
+.profile-security{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.profile-security>.eyebrow{margin-bottom:6px}
+.profile-security h3{font:700 16px Manrope,sans-serif;margin:0 0 6px}
+.profile-security>.muted{margin-bottom:16px}
+.profile-password-form{gap:12px}
+.profile-password-form label{gap:7px;font-size:10px;font-weight:600;color:#454f46}
+.profile-password-form input{width:100%;min-height:40px;border:1px solid #e2e6df;border-radius:5px;padding:9px;font-size:12px;color:#28342a}
+.profile-password-form .button{padding:12px 15px;font-size:11px}
+.profile-close-button{margin-top:12px;padding:10px 15px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:11px}
 .confirmation-modal{text-align:center;padding:34px}
 .confirmation-check{width:44px;height:44px;margin:0 auto 17px;border-radius:50%;display:grid;place-items:center;background:#eaf3df;color:#527548;font-size:22px;font-weight:700}
 .confirmation-modal .eyebrow{margin-bottom:7px}

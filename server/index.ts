@@ -82,6 +82,10 @@ const resetPasswordSchema = z.object({
   token: z.string().regex(/^[a-f0-9]{64}$/),
   password: z.string().min(8).max(72),
 });
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(72),
+  newPassword: z.string().min(8).max(72),
+});
 
 function issueToken(userId: number): string {
   return jwt.sign({ sub: String(userId) }, jwtSecret, { expiresIn: "7d" });
@@ -285,6 +289,36 @@ app.post("/api/auth/reset-password", authRateLimit, async (req, res) => {
     return;
   }
   res.json({ message: "Votre mot de passe a été modifié. Vous pouvez vous connecter." });
+});
+
+app.post("/api/auth/change-password", requireAuth, authRateLimit, async (req, res) => {
+  const input = parseBody(changePasswordSchema, req.body, res);
+  if (!input) return;
+  const userId = req.userId;
+  if (userId === undefined) {
+    res.status(401).json({ error: "Connectez-vous pour continuer." });
+    return;
+  }
+  if (input.currentPassword === input.newPassword) {
+    res.status(400).json({ error: "Le nouveau mot de passe doit être différent de l’ancien." });
+    return;
+  }
+
+  const user = await database.one<{ password_hash: string }>(
+    "SELECT password_hash FROM users WHERE id = ?",
+    userId,
+  );
+  if (!user || !bcrypt.compareSync(input.currentPassword, user.password_hash)) {
+    res.status(401).json({ error: "Votre mot de passe actuel est incorrect." });
+    return;
+  }
+
+  const passwordHash = bcrypt.hashSync(input.newPassword, 12);
+  await transaction(async (connection) => {
+    await connection.run("UPDATE users SET password_hash = ? WHERE id = ?", passwordHash, userId);
+    await connection.run("DELETE FROM password_reset_tokens WHERE user_id = ?", userId);
+  });
+  res.json({ message: "Votre mot de passe a été modifié avec succès." });
 });
 
 app.post("/api/auth/logout", (_req, res) => {

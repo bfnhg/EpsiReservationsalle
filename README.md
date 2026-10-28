@@ -39,6 +39,7 @@ Application responsive de réservation de salles de campus. Les étudiants peuve
 - **Interface** : React 19, TypeScript, Vite et CSS responsive.
 - **Serveur** : Node.js, Express 5, TypeScript.
 - **Persistance** : SQLite via `sql.js` en local, Neon PostgreSQL en ligne.
+- **Profil** : l’étudiant peut consulter ses informations et modifier son mot de passe depuis son avatar, après vérification du mot de passe actuel.
 - **Authentification** : mot de passe haché avec bcryptjs et jeton JWT dans un cookie HTTP-only.
 - **E-mail** : SDK navigateur `@emailjs/browser`. EmailJS envoie les e-mails au moyen du service et du modèle configurés dans le compte EmailJS.
 

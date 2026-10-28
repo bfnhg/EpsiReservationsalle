@@ -204,6 +204,11 @@ function App() {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [profileNewPassword, setProfileNewPassword] = useState("");
+  const [passwordChangeError, setPasswordChangeError] = useState("");
+  const [passwordChangeNotice, setPasswordChangeNotice] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
   const [initialSlot] = useState(initialBookingSlot);
   const [selectedDate, setSelectedDate] = useState(initialSlot.date);
   const [startTime, setStartTime] = useState(initialSlot.time);
@@ -575,6 +580,26 @@ function App() {
       setAuthError(error instanceof Error ? error.message : "L’opération a échoué.");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function changePassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setChangingPassword(true);
+    setPasswordChangeError("");
+    setPasswordChangeNotice("");
+    try {
+      const data = await api<{ message: string }>("/api/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword, newPassword: profileNewPassword }),
+      });
+      setCurrentPassword("");
+      setProfileNewPassword("");
+      setPasswordChangeNotice(data.message);
+    } catch (error) {
+      setPasswordChangeError(error instanceof Error ? error.message : "Impossible de modifier le mot de passe.");
+    } finally {
+      setChangingPassword(false);
     }
   }
 
@@ -1261,7 +1286,7 @@ function App() {
       </main>
       {profileOpen && <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setProfileOpen(false); }}>
         <section className="modal-card profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
-          <button className="modal-close" onClick={() => setProfileOpen(false)} aria-label="Fermer">×</button>
+          <button className="modal-close" onClick={() => setProfileOpen(false)} aria-label="Fermer" disabled={changingPassword}>×</button>
           <div className="profile-avatar" aria-hidden="true">{user.name.slice(0, 1).toUpperCase()}</div>
           <p className="eyebrow">MON COMPTE</p>
           <h2 id="profile-title">Informations du profil</h2>
@@ -1271,7 +1296,19 @@ function App() {
             <div><dt>Type de compte</dt><dd>{user.role === "admin" ? "Administrateur" : "Étudiant"}</dd></div>
             <div><dt>Identifiant</dt><dd>#{user.id}</dd></div>
           </dl>
-          <button className="button primary full" onClick={() => setProfileOpen(false)}>Fermer <span aria-hidden="true">↗</span></button>
+          <section className="profile-security" aria-labelledby="profile-password-title">
+            <p className="eyebrow">SÉCURITÉ</p>
+            <h3 id="profile-password-title">Modifier mon mot de passe</h3>
+            <p className="muted">Confirmez votre mot de passe actuel pour le remplacer.</p>
+            <form className="form-stack profile-password-form" onSubmit={(event) => void changePassword(event)}>
+              <label>Mot de passe actuel<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required maxLength={72} /></label>
+              <label>Nouveau mot de passe<input type="password" value={profileNewPassword} onChange={(event) => setProfileNewPassword(event.target.value)} autoComplete="new-password" required minLength={8} maxLength={72} placeholder="8 caractères minimum" /></label>
+              {passwordChangeError && <p className="form-error" role="alert">{passwordChangeError}</p>}
+              {passwordChangeNotice && <p className="form-notice" role="status">{passwordChangeNotice}</p>}
+              <button className="button primary full" disabled={changingPassword}>{changingPassword ? "Modification…" : "Enregistrer le nouveau mot de passe"} <span aria-hidden="true">↗</span></button>
+            </form>
+          </section>
+          <button className="button secondary full profile-close-button" onClick={() => setProfileOpen(false)} disabled={changingPassword}>Fermer</button>
         </section>
       </div>}
       {confirmation && <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setConfirmation(null); }}>
