@@ -75,6 +75,13 @@ const loginSchema = z.object({
   email: z.email().max(254),
   password: z.string().min(1).max(72),
 });
+const forgotPasswordSchema = z.object({
+  email: z.email().max(254),
+});
+const resetPasswordSchema = z.object({
+  token: z.string().regex(/^[a-f0-9]{64}$/),
+  password: z.string().min(8).max(72),
+});
 
 function issueToken(userId: number): string {
   return jwt.sign({ sub: String(userId) }, jwtSecret, { expiresIn: "7d" });
@@ -193,6 +200,91 @@ app.post("/api/auth/login", authRateLimit, async (req, res) => {
   }
   res.cookie("session", issueToken(user.id), cookieOptions);
   res.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+});
+
+app.post("/api/auth/forgot-password", authRateLimit, async (req, res) => {
+  const input = parseBody(forgotPasswordSchema, req.body, res);
+  if (!input) return;
+
+  const serviceId = process.env.VITE_EMAILJS_SERVICE_ID;
+  const templateId = process.env.VITE_EMAILJS_PASSWORD_RESET_TEMPLATE_ID;
+  const publicKey = process.env.VITE_EMAILJS_PUBLIC_KEY;
+  const appUrl = process.env.APP_URL;
+  if (!serviceId || !templateId || !publicKey || !appUrl) {
+    res.status(503).json({ error: "La réinitialisation du mot de passe n’est pas configurée. Contactez l’administration." });
+    return;
+  }
+
+  const user = await database.one<{ id: number; name: string; email: string }>(
+    "SELECT id, name, email FROM users WHERE email = ?",
+    input.email.trim().toLowerCase(),
+  );
+  if (user) {
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const expiresAt = Date.now() + 60 * 60 * 1000;
+    await database.run("DELETE FROM password_reset_tokens WHERE user_id = ?", user.id);
+    await database.run(
+      "INSERT INTO password_reset_tokens (token_hash, user_id, expires_at) VALUES (?, ?, ?)",
+      tokenHash,
+      user.id,
+      expiresAt,
+    );
+
+    try {
+      const resetUrl = new URL("/", appUrl);
+      resetUrl.searchParams.set("resetPassword", token);
+      const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id: serviceId,
+          template_id: templateId,
+          user_id: publicKey,
+          template_params: {
+            to_email: user.email,
+            to_name: user.name,
+            reset_link: resetUrl.toString(),
+          },
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`L’envoi de l’e-mail de réinitialisation a échoué (HTTP ${response.status}).`);
+      }
+    } catch (error) {
+      await database.run("DELETE FROM password_reset_tokens WHERE token_hash = ?", tokenHash);
+      throw error;
+    }
+  }
+
+  res.json({ message: "Si cette adresse est associée à un compte, un lien de réinitialisation vient d’être envoyé." });
+});
+
+app.post("/api/auth/reset-password", authRateLimit, async (req, res) => {
+  const input = parseBody(resetPasswordSchema, req.body, res);
+  if (!input) return;
+
+  const tokenHash = crypto.createHash("sha256").update(input.token).digest("hex");
+  const reset = await transaction(async (connection) => {
+    const token = await connection.one<{ user_id: number }>(
+      "SELECT user_id FROM password_reset_tokens WHERE token_hash = ? AND expires_at > ?",
+      tokenHash,
+      Date.now(),
+    );
+    if (!token) return false;
+
+    const consumed = await connection.run("DELETE FROM password_reset_tokens WHERE token_hash = ?", tokenHash);
+    if (consumed.changes !== 1) return false;
+    const passwordHash = bcrypt.hashSync(input.password, 12);
+    await connection.run("UPDATE users SET password_hash = ? WHERE id = ?", passwordHash, token.user_id);
+    await connection.run("DELETE FROM password_reset_tokens WHERE user_id = ?", token.user_id);
+    return true;
+  });
+  if (!reset) {
+    res.status(400).json({ error: "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau." });
+    return;
+  }
+  res.json({ message: "Votre mot de passe a été modifié. Vous pouvez vous connecter." });
 });
 
 app.post("/api/auth/logout", (_req, res) => {

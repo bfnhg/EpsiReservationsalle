@@ -220,6 +220,12 @@ const schemaSqlite = `
     body TEXT NOT NULL CHECK (length(body) BETWEEN 1 AND 2000),
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    token_hash TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at INTEGER NOT NULL
+  );
+  CREATE UNIQUE INDEX IF NOT EXISTS password_reset_tokens_user ON password_reset_tokens(user_id);
   CREATE INDEX IF NOT EXISTS reservations_room_time ON reservations(room_id, status, starts_at, ends_at);
   CREATE INDEX IF NOT EXISTS reservations_user_time ON reservations(user_id, starts_at DESC);
   CREATE INDEX IF NOT EXISTS support_messages_user_time ON support_messages(user_id, created_at, id);
@@ -258,6 +264,11 @@ const schemaPostgres = [
     body TEXT NOT NULL CHECK (length(body) BETWEEN 1 AND 2000),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`,
+  `CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    token_hash TEXT PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at BIGINT NOT NULL
+  )`,
+  "CREATE UNIQUE INDEX IF NOT EXISTS password_reset_tokens_user ON password_reset_tokens(user_id)",
   "CREATE INDEX IF NOT EXISTS reservations_room_time ON reservations(room_id, status, starts_at, ends_at)",
   "CREATE INDEX IF NOT EXISTS reservations_user_time ON reservations(user_id, starts_at DESC)",
   "CREATE INDEX IF NOT EXISTS support_messages_user_time ON support_messages(user_id, created_at, id)",

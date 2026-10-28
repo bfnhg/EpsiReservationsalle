@@ -111,8 +111,11 @@ Le fichier `.env` local est configuré avec le service Gmail EmailJS `service_qb
    VITE_EMAILJS_SERVICE_ID=service_xxxxxxx
    VITE_EMAILJS_TEMPLATE_ID=template_xxxxxxx
    VITE_EMAILJS_CONTACT_TEMPLATE_ID=template_contact_xxxxxxx
+   VITE_EMAILJS_PASSWORD_RESET_TEMPLATE_ID=template_reset_xxxxxxx
    VITE_EMAILJS_PUBLIC_KEY=xxxxxxxxxxxxxxx
    ```
+
+Pour le mot de passe oublié, crée aussi un modèle EmailJS avec `{{to_email}}` comme destinataire et `{{reset_link}}` dans le corps du message. Configure `VITE_EMAILJS_PASSWORD_RESET_TEMPLATE_ID` et `APP_URL` (URL publique de l’application, par exemple `http://localhost:5173` en local). Le lien envoyé expire après une heure et ne peut être utilisé qu’une seule fois.
 
 6. Redémarre `npm run dev` après toute modification des variables `VITE_`.
 7. Inscris-toi avec une adresse que tu peux consulter, effectue une réservation et vérifie la boîte de réception ainsi que les courriers indésirables.
@@ -248,7 +251,9 @@ La configuration Vercel est dans `vercel.json`. Le dépôt doit être poussé ve
    | `VITE_EMAILJS_SERVICE_ID` | Identifiant du service EmailJS |
    | `VITE_EMAILJS_TEMPLATE_ID` | Modèle de confirmation de réservation |
    | `VITE_EMAILJS_CONTACT_TEMPLATE_ID` | Modèle de notification de contact |
+   | `VITE_EMAILJS_PASSWORD_RESET_TEMPLATE_ID` | Modèle du lien de réinitialisation |
    | `VITE_EMAILJS_PUBLIC_KEY` | Clé publique EmailJS |
+   | `APP_URL` | URL publique de l’application, sans secret |
 
    `DATABASE_URL` et `JWT_SECRET` sont des secrets serveur : ne leur donne pas le préfixe `VITE_`. Seules les variables EmailJS explicitement préfixées `VITE_` sont destinées au navigateur.
 
@@ -310,7 +315,9 @@ Variables générales :
 | `VITE_EMAILJS_SERVICE_ID` | Pour l’e-mail | Identifiant du service EmailJS |
 | `VITE_EMAILJS_TEMPLATE_ID` | Pour l’e-mail | Identifiant du modèle EmailJS |
 | `VITE_EMAILJS_CONTACT_TEMPLATE_ID` | Pour le contact | Identifiant du modèle EmailJS de messagerie |
+| `VITE_EMAILJS_PASSWORD_RESET_TEMPLATE_ID` | Mot de passe oublié | Identifiant du modèle EmailJS de réinitialisation |
 | `VITE_EMAILJS_PUBLIC_KEY` | Pour l’e-mail | Clé publique EmailJS autorisée pour le domaine |
+| `APP_URL` | Mot de passe oublié | URL publique de l’application utilisée dans le lien |
 
 Pour un serveur Node.js traditionnel, configure toutes les variables avant compilation, car Vite intègre les valeurs `VITE_` dans les fichiers client :
 

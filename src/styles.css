@@ -126,6 +126,14 @@ h1,h2,h3,p{margin-top:0}
 .modal-card{position:relative;width:min(100%,440px);background:#fff;border-radius:12px;padding:30px;box-shadow:0 24px 80px #101d1680}
 .modal-card h2{font:700 23px/1.2 Manrope,sans-serif;letter-spacing:-.8px;margin:0 0 8px}
 .modal-close{position:absolute;top:12px;right:14px;border:0;background:transparent;color:#69736a;font-size:24px}
+.profile-button{padding:0;cursor:pointer}
+.profile-button:hover{box-shadow:0 0 0 3px #d4e7f1}
+.profile-modal>.eyebrow{margin:18px 0 6px}
+.profile-avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#e4f2fa;color:#075d91;font:700 24px Manrope,sans-serif}
+.profile-details{display:grid;gap:12px;margin:22px 0;padding:16px;border:1px solid var(--line);border-radius:8px;background:#fafbf8}
+.profile-details div{display:flex;flex-direction:column;gap:4px}
+.profile-details dt{font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:#7a847b}
+.profile-details dd{margin:0;font-size:12px;font-weight:600;overflow-wrap:anywhere}
 .confirmation-modal{text-align:center;padding:34px}
 .confirmation-check{width:44px;height:44px;margin:0 auto 17px;border-radius:50%;display:grid;place-items:center;background:#eaf3df;color:#527548;font-size:22px;font-weight:700}
 .confirmation-modal .eyebrow{margin-bottom:7px}
@@ -172,6 +180,9 @@ h1,h2,h3,p{margin-top:0}
 .button.primary{padding:12px 15px;font-size:11px}
 .full{width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:3px}
 .form-error{background:#fff0ed;color:#a23e30;padding:9px;border-radius:5px;font-size:10px;margin:0}
+.form-notice{background:#edf4e5;color:#3e6039;padding:9px;border-radius:5px;font-size:10px;line-height:1.5;margin:0}
+.auth-text-button{display:block;margin:16px auto 0;border:0;background:transparent;color:#075d91;font-size:11px;text-decoration:underline;text-underline-offset:3px}
+.auth-text-button:hover{color:#064775}
 .privacy-note{font-size:9px;color:#838b82;margin-top:23px;text-align:center}
 .privacy-note span{color:var(--epsi-orange);margin-right:5px}
 .loading-screen{min-height:100vh;display:grid;place-items:center;color:#677265;font-size:13px}

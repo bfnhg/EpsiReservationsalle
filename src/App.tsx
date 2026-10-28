@@ -192,12 +192,18 @@ function MenuIcon({ name }: { name: "booking" | "calendar" | "heart" | "message"
 function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [passwordResetToken, setPasswordResetToken] = useState(() => new URLSearchParams(window.location.search).get("resetPassword") ?? "");
+  const [authMode, setAuthMode] = useState<"login" | "register" | "forgot" | "reset">(() =>
+    new URLSearchParams(window.location.search).get("resetPassword") ? "reset" : "login",
+  );
   const [authError, setAuthError] = useState("");
+  const [authNotice, setAuthNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
   const [initialSlot] = useState(initialBookingSlot);
   const [selectedDate, setSelectedDate] = useState(initialSlot.date);
   const [startTime, setStartTime] = useState(initialSlot.time);
@@ -401,6 +407,16 @@ function App() {
   }, [loadingSession, user]);
 
   useEffect(() => {
+    if (passwordResetToken) {
+      api<void>("/api/auth/logout", { method: "POST" })
+        .then(() => setUser(null))
+        .catch((error: unknown) => {
+          setAuthError(error instanceof Error ? error.message : "Impossible d’ouvrir le lien de réinitialisation.");
+        })
+        .finally(() => setLoadingSession(false));
+      return;
+    }
+
     api<{ user: User }>("/api/auth/me")
       .then(({ user: currentUser }) => {
         setUser(currentUser);
@@ -413,7 +429,7 @@ function App() {
         }
       })
       .finally(() => setLoadingSession(false));
-  }, []);
+  }, [passwordResetToken]);
 
   useEffect(() => {
     if (!user) return;
@@ -513,18 +529,50 @@ function App() {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [confirmation, editingReservation]);
 
+  useEffect(() => {
+    if (!profileOpen) return;
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setProfileOpen(false);
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [profileOpen]);
+
   async function submitAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setAuthError("");
     try {
-      const endpoint = authMode === "login" ? "/api/auth/login" : "/api/auth/register";
-      const body = authMode === "login" ? { email, password } : { name, email, password };
-      const data = await api<{ user: User }>(endpoint, { method: "POST", body: JSON.stringify(body) });
-      setUser(data.user);
-      if (data.user.role === "admin") setActiveTab("admin");
+      if (authMode === "forgot") {
+        const data = await api<{ message: string }>("/api/auth/forgot-password", {
+          method: "POST",
+          body: JSON.stringify({ email }),
+        });
+        setAuthNotice(data.message);
+      } else if (authMode === "reset") {
+        if (password !== newPassword) {
+          setAuthError("Les deux mots de passe ne correspondent pas.");
+          return;
+        }
+        const data = await api<{ message: string }>("/api/auth/reset-password", {
+          method: "POST",
+          body: JSON.stringify({ token: passwordResetToken, password }),
+        });
+        window.history.replaceState(null, "", window.location.pathname);
+        setPasswordResetToken("");
+        setPassword("");
+        setNewPassword("");
+        setAuthMode("login");
+        setAuthNotice(data.message);
+      } else {
+        const endpoint = authMode === "login" ? "/api/auth/login" : "/api/auth/register";
+        const body = authMode === "login" ? { email, password } : { name, email, password };
+        const data = await api<{ user: User }>(endpoint, { method: "POST", body: JSON.stringify(body) });
+        setUser(data.user);
+        if (data.user.role === "admin") setActiveTab("admin");
+      }
     } catch (error) {
-      setAuthError(error instanceof Error ? error.message : "La connexion a échoué.");
+      setAuthError(error instanceof Error ? error.message : "L’opération a échoué.");
     } finally {
       setBusy(false);
     }
@@ -927,21 +975,31 @@ function App() {
         <section className="auth-panel">
           <div className="auth-form-wrap">
             <p className="eyebrow">RÉSERVATION DES SALLES</p>
-            <h2>{authMode === "login" ? "Ravi de vous revoir." : "Bienvenue à bord."}</h2>
-            <p className="muted">{authMode === "login" ? "Connectez-vous à votre espace étudiant." : "Créez votre espace étudiant en quelques secondes."}</p>
-            <div className="auth-switch" role="tablist" aria-label="Type d’accès">
-              <button role="tab" aria-selected={authMode === "login"} className={authMode === "login" ? "selected" : ""} onClick={() => { setAuthMode("login"); setAuthError(""); }}>Connexion</button>
-              <button role="tab" aria-selected={authMode === "register"} className={authMode === "register" ? "selected" : ""} onClick={() => { setAuthMode("register"); setAuthError(""); }}>Inscription</button>
-            </div>
+            <h2>{authMode === "login" ? "Ravi de vous revoir." : authMode === "register" ? "Bienvenue à bord." : authMode === "forgot" ? "Mot de passe oublié ?" : "Choisissez un nouveau mot de passe."}</h2>
+            <p className="muted">{authMode === "login" ? "Connectez-vous à votre espace étudiant." : authMode === "register" ? "Créez votre espace étudiant en quelques secondes." : authMode === "forgot" ? "Nous vous enverrons un lien de réinitialisation par e-mail." : "Votre nouveau mot de passe doit contenir au moins 8 caractères."}</p>
+            {(authMode === "login" || authMode === "register") && <div className="auth-switch" role="tablist" aria-label="Type d’accès">
+              <button role="tab" aria-selected={authMode === "login"} className={authMode === "login" ? "selected" : ""} onClick={() => { setAuthMode("login"); setAuthError(""); setAuthNotice(""); }}>Connexion</button>
+              <button role="tab" aria-selected={authMode === "register"} className={authMode === "register" ? "selected" : ""} onClick={() => { setAuthMode("register"); setAuthError(""); setAuthNotice(""); }}>Inscription</button>
+            </div>}
             <form onSubmit={submitAuth} className="form-stack">
               {authMode === "register" && (
                 <label>Nom complet<input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" required minLength={2} maxLength={80} placeholder="Alex Martin" /></label>
               )}
-              <label>Adresse e-mail<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required placeholder="vous@epsi.fr" /></label>
-              <label>Mot de passe<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={authMode === "login" ? "current-password" : "new-password"} required minLength={authMode === "register" ? 8 : 1} maxLength={72} placeholder={authMode === "register" ? "8 caractères minimum" : "Votre mot de passe"} /></label>
+              {authMode !== "reset" && <label>Adresse e-mail<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required placeholder="vous@epsi.fr" /></label>}
+              {authMode !== "forgot" && <label>{authMode === "reset" ? "Nouveau mot de passe" : "Mot de passe"}<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={authMode === "login" ? "current-password" : "new-password"} required minLength={authMode === "login" ? 1 : 8} maxLength={72} placeholder={authMode === "login" ? "Votre mot de passe" : "8 caractères minimum"} /></label>}
+              {authMode === "reset" && <label>Confirmer le mot de passe<input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} autoComplete="new-password" required minLength={8} maxLength={72} placeholder="Saisissez à nouveau le mot de passe" /></label>}
               {authError && <p className="form-error" role="alert">{authError}</p>}
-              <button className="button primary full" disabled={busy}>{busy ? "Un instant…" : authMode === "login" ? "Se connecter" : "Créer mon compte"} <span aria-hidden="true">↗</span></button>
+              {authNotice && <p className="form-notice" role="status">{authNotice}</p>}
+              <button className="button primary full" disabled={busy}>{busy ? "Un instant…" : authMode === "login" ? "Se connecter" : authMode === "register" ? "Créer mon compte" : authMode === "forgot" ? "Envoyer le lien" : "Modifier mon mot de passe"} <span aria-hidden="true">↗</span></button>
             </form>
+            {authMode === "login" && <button className="auth-text-button" type="button" onClick={() => { setAuthMode("forgot"); setAuthError(""); setAuthNotice(""); }}>Mot de passe oublié ?</button>}
+            {(authMode === "forgot" || authMode === "reset") && <button className="auth-text-button" type="button" onClick={() => {
+              setAuthMode("login");
+              setAuthError("");
+              setAuthNotice("");
+              setPasswordResetToken("");
+              window.history.replaceState(null, "", window.location.pathname);
+            }}>Retour à la connexion</button>}
             <p className="privacy-note"><span aria-hidden="true">◈</span> Vos informations restent privées et sécurisées.</p>
           </div>
         </section>
@@ -1004,7 +1062,7 @@ function App() {
             <button className={activeTab === "messages" ? "nav-link active" : "nav-link"} aria-current={activeTab === "messages" ? "page" : undefined} onClick={() => { setActiveTab("messages"); setMenuOpen(false); }}><MenuIcon name="message" /><span className="nav-label">Contact</span></button>
           </>}
         </nav>
-        <div className="user-menu"><span className="avatar">{user.name.slice(0, 1).toUpperCase()}</span><span className="user-name">{user.name}</span><button className="logout-button" onClick={logout} aria-label="Se déconnecter" title="Se déconnecter"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17l5-5-5-5M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></svg></button></div>
+        <div className="user-menu"><button className="avatar profile-button" onClick={() => setProfileOpen(true)} aria-label="Afficher mon profil" title="Afficher mon profil">{user.name.slice(0, 1).toUpperCase()}</button><span className="user-name">{user.name}</span><button className="logout-button" onClick={logout} aria-label="Se déconnecter" title="Se déconnecter"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 17l5-5-5-5M15 12H3" /><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></svg></button></div>
       </header>
 
       <main className="main-content">
@@ -1201,6 +1259,21 @@ function App() {
         )}
         <footer className="page-footer"><span>EPSI <b>·</b> RÉSERVATION DES SALLES</span><span>Étudiez, créez, partagez.</span></footer>
       </main>
+      {profileOpen && <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setProfileOpen(false); }}>
+        <section className="modal-card profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+          <button className="modal-close" onClick={() => setProfileOpen(false)} aria-label="Fermer">×</button>
+          <div className="profile-avatar" aria-hidden="true">{user.name.slice(0, 1).toUpperCase()}</div>
+          <p className="eyebrow">MON COMPTE</p>
+          <h2 id="profile-title">Informations du profil</h2>
+          <dl className="profile-details">
+            <div><dt>Nom complet</dt><dd>{user.name}</dd></div>
+            <div><dt>Adresse e-mail</dt><dd>{user.email}</dd></div>
+            <div><dt>Type de compte</dt><dd>{user.role === "admin" ? "Administrateur" : "Étudiant"}</dd></div>
+            <div><dt>Identifiant</dt><dd>#{user.id}</dd></div>
+          </dl>
+          <button className="button primary full" onClick={() => setProfileOpen(false)}>Fermer <span aria-hidden="true">↗</span></button>
+        </section>
+      </div>}
       {confirmation && <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setConfirmation(null); }}>
         <section className="modal-card confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="confirmation-title">
           <button className="modal-close" onClick={() => setConfirmation(null)} aria-label="Fermer">×</button>
