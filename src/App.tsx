@@ -310,6 +310,7 @@ function App() {
   const [passwordChangeError, setPasswordChangeError] = useState("");
   const [passwordChangeNotice, setPasswordChangeNotice] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [initialSlot] = useState(initialBookingSlot);
   const [selectedDate, setSelectedDate] = useState(initialSlot.date);
   const [startTime, setStartTime] = useState(initialSlot.time);
@@ -3182,18 +3183,40 @@ function App() {
                 <dd>#{user.id}</dd>
               </div>
             </dl>
-            {/* <section className="profile-security" aria-labelledby="profile-password-title">
-            <p className="eyebrow">SÉCURITÉ</p>
-            <h3 id="profile-password-title">Modifier mon mot de passe</h3>
-            <p className="muted">Confirmez votre mot de passe actuel pour le remplacer.</p>
-            <form className="form-stack profile-password-form" onSubmit={(event) => void changePassword(event)}>
-              <label>Mot de passe actuel<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required maxLength={72} /></label>
-              <label>Nouveau mot de passe<input type="password" value={profileNewPassword} onChange={(event) => setProfileNewPassword(event.target.value)} autoComplete="new-password" required minLength={8} maxLength={72} placeholder="8 caractères minimum" /></label>
-              {passwordChangeError && <p className="form-error" role="alert">{passwordChangeError}</p>}
-              {passwordChangeNotice && <p className="form-notice" role="status">{passwordChangeNotice}</p>}
-              <button className="button primary full" disabled={changingPassword}>{changingPassword ? "Modification…" : "Enregistrer le nouveau mot de passe"} <span aria-hidden="true">↗</span></button>
-            </form>
-          </section> */}
+            <section className="profile-security" aria-labelledby="profile-password-title">
+              <p className="eyebrow">SÉCURITÉ</p>
+              <button
+                className="profile-password-toggle"
+                type="button"
+                aria-expanded={showPasswordChange}
+                aria-controls="profile-password-content"
+                onClick={() => {
+                  setShowPasswordChange((visible) => !visible);
+                  setPasswordChangeError("");
+                  setPasswordChangeNotice("");
+                }}
+                disabled={changingPassword}
+              >
+                <span id="profile-password-title">
+                  {showPasswordChange ? "Annuler la modification" : "Modifier mon mot de passe"}
+                </span>
+                <span className="profile-password-chevron" aria-hidden="true">
+                  {showPasswordChange ? "−" : "+"}
+                </span>
+              </button>
+              {showPasswordChange && (
+                <div id="profile-password-content" className="profile-password-content">
+                  <p className="muted">Confirmez votre mot de passe actuel pour le remplacer.</p>
+                  <form className="form-stack profile-password-form" onSubmit={(event) => void changePassword(event)}>
+                    <label>Mot de passe actuel<input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required maxLength={72} /></label>
+                    <label>Nouveau mot de passe<input type="password" value={profileNewPassword} onChange={(event) => setProfileNewPassword(event.target.value)} autoComplete="new-password" required minLength={8} maxLength={72} placeholder="8 caractères minimum" /></label>
+                    {passwordChangeError && <p className="form-error" role="alert">{passwordChangeError}</p>}
+                    {passwordChangeNotice && <p className="form-notice" role="status">{passwordChangeNotice}</p>}
+                    <button className="button primary full" disabled={changingPassword}>{changingPassword ? "Modification…" : "Enregistrer le nouveau mot de passe"} <span aria-hidden="true">↗</span></button>
+                  </form>
+                </div>
+              )}
+            </section>
             <button
               className="button secondary full profile-close-button"
               onClick={() => setProfileOpen(false)}

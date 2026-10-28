@@ -137,8 +137,12 @@ h1,h2,h3,p{margin-top:0}
 .profile-modal{max-height:calc(100vh - 40px);overflow-y:auto}
 .profile-security{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
 .profile-security>.eyebrow{margin-bottom:6px}
-.profile-security h3{font:700 16px Manrope,sans-serif;margin:0 0 6px}
-.profile-security>.muted{margin-bottom:16px}
+.profile-password-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid #dfe7ea;border-radius:8px;background:#f8fbfc;color:#243b49;text-align:left;font:700 13px Manrope,sans-serif;transition:background .18s ease,border-color .18s ease}
+.profile-password-toggle:hover{border-color:#b9d8e8;background:#f0f8fc}
+.profile-password-toggle:disabled{opacity:.6;cursor:wait}
+.profile-password-chevron{font-size:20px;line-height:1;color:#075d91}
+.profile-password-content{padding-top:14px}
+.profile-password-content>.muted{margin-bottom:16px}
 .profile-password-form{gap:12px}
 .profile-password-form label{gap:7px;font-size:10px;font-weight:600;color:#454f46}
 .profile-password-form input{width:100%;min-height:40px;border:1px solid #e2e6df;border-radius:5px;padding:9px;font-size:12px;color:#28342a}
